@@ -38,7 +38,9 @@
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
     "skipLibCheck": true,
+    "allowImportingTsExtensions": true,
+    "noEmit": true
   },
-  "include": ["src/**/*","/"],
+  "include": ["**/*.ts", "types/**/*.d.ts"],
   "exclude": ["node_modules"]
 }
