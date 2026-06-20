@@ -4,6 +4,5 @@ import { requireAuth } from "../middleware/auth.middleware.ts";
 
 const router = Router();
 
-router.get("/", requireAuth,imageSignedUrl);
-
+router.get("/", requireAuth, imageSignedUrl);
 export default router
