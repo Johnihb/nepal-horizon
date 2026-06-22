@@ -46,3 +46,30 @@ export const getPackages = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const deletePackage = async (req:Request , res:Response)=>{
+  const { id } = req.params;
+  if(!id || typeof id !== 'string' || id.trim().length === 0) return res.status(400).json(apiResponse(400, { message: "Invalid package ID" }));
+
+  if(!req.session?.user.id || !req.session?.user) return res.status(401).json(apiResponse(401, { message: "Unauthorized" }));
+  
+  
+  
+  const packageExits = await prisma.package.findUnique({ where: { id: id as string } });
+
+  if(!packageExits) return res.status(404).json(apiResponse(404, { message: "Package not found" }));
+  
+
+  await prisma.user.update({
+    where:{
+      id:req.session?.user.id
+    },
+    data:{
+      packages:{
+      delete:{
+        id:packageExits.id
+      }
+    }}
+  })
+
+}
