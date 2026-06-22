@@ -1,10 +1,12 @@
 import express from "express";
 import { requireAuth } from "../middleware/auth.middleware.ts";
-import { getPackages, postPackage } from "../controllers/package.controller.ts";
+import { getPackages, postPackage, updatePackage } from "../controllers/package.controller.ts";
 
-const packagesRouter = express.Router();
+const adminRouter = express.Router();
 
-packagesRouter.post("/",requireAuth ,postPackage);
-packagesRouter.get("",getPackages);
+adminRouter.post("/",requireAuth ,postPackage);
+adminRouter.get("",getPackages);
+adminRouter.patch("/:id",requireAuth ,updatePackage);
 
-export default packagesRouter;
+
+export default adminRouter;

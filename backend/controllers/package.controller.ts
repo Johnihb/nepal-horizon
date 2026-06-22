@@ -3,16 +3,16 @@ import { prisma } from "../lib/prisma.ts";
 import z, { number, ZodError } from "zod";
 import { apiResponse } from "../helpers/apiResponse.ts";
 import { packageSchema } from "../types/package.ts";
+import { v2 as cloudinary } from "cloudinary";
 
 const offsetValueSchema = z.object({
   offset: z.coerce.number().int().min(0).optional(), // coerce handles string → number,
-})
-
+});
 
 export const postPackage = async (req: Request, res: Response) => {
   try {
     const request = req.body;
-    console.log("request",typeof request.price);
+    console.log("request", typeof request.price);
     const validatedData = packageSchema.parse(request);
 
     const newPackage = await prisma.package.create({
@@ -37,7 +37,50 @@ export const postPackage = async (req: Request, res: Response) => {
     });
     return res.status(201).json(apiResponse(201, newPackage));
   } catch (error) {
-    console.log("error",error);
+    console.log("error", error);
+    if (error instanceof ZodError) {
+      return res.status(400).json({
+        success: false,
+        message: "Validation failed",
+        errors: error?.issues?.map((e) => ({
+          field: e.path.join("."),
+          message: e.message,
+        })),
+      });
+    }
+    console.error("Error creating package:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const getPackages = async (req: Request, res: Response) => {
+  try {
+    const validatedData = offsetValueSchema.parse(req.query);
+    const page = validatedData.offset ?? 0;
+    const offset = page * 5;
+    const packages = await prisma.package.findMany({
+      include: {
+        media: true,
+      },
+      orderBy: [
+        {
+          price: "desc",
+        },
+        {
+          id: "asc",
+        },
+      ],
+      skip: offset,
+      take: 5,
+    });
+    console.log("packages", packages);
+    res.status(200).json(
+      apiResponse(200, {
+        packages,
+        nextPage: packages.length === 5 ? page + 1 : null,
+      }),
+    );
+  } catch (error) {
     if (error instanceof ZodError) {
       return res.status(400).json({
         success: false,
@@ -53,30 +96,67 @@ export const postPackage = async (req: Request, res: Response) => {
   }
 };
 
-export const getPackages = async (req:Request , res:Response ) => {
+export const updatePackage = async (req: Request, res: Response) => {
   try {
-    const validatedData = offsetValueSchema.parse(req.query); 
-    const page = validatedData.offset ?? 0;
-    const offset = page * 5;
-    const packages = await prisma.package.findMany({
-      include: {
-        media: true,
-      },
-      orderBy: [
-        {
-          price: "desc",
-        },
-        {
-          id: "asc",
-        }
-      ],
-      skip: offset,
-      take: 5,
+    const { id } = req.params;
+    const request = req.body;
+    const validatedData = packageSchema.parse(request);
+
+    // Fetch existing media to delete from Cloudinary
+    const existingPackage = await prisma.package.findUnique({
+      where: { id: id as string },
+      include: { media: true },
     });
-    console.log("packages",packages);
-     res.status(200).json(apiResponse(200, {packages, nextPage: packages.length === 5 ? page + 1 : null}));
+
+    if (!existingPackage) {
+      return res
+        .status(404)
+        .json(apiResponse(404, { message: "Package not found" }));
+    }
+
+    // 1. Diff what needs to go — but don't delete yet
+const imagesToDelete = existingPackage.media.filter(
+  (m) => !validatedData.images?.some((img) => img.public_id === m.public_id)
+);
+
+// 2. Update package + media (upsert now works if public_id is @unique)
+const updatedPackage = await prisma.package.update({
+  where: { id: id as string },
+  data: {
+    name: validatedData.name,
+    location: validatedData.location,
+    description: validatedData.description || "Sorry, no description provided.",
+    price: Number(validatedData.price),
+    media: {
+      upsert: validatedData.images?.map((img) => ({
+        where: { public_id: img.public_id },
+        update: { url: img.url },
+        create: { url: img.url, public_id: img.public_id },
+      })) ?? [],
+      deleteMany: imagesToDelete.map((m) => ({ id: m.id })), // scoped delete
+    },
+    // ** Alternative
+    //     media: {
+//   deleteMany: imagesToDelete.map((m) => ({ id: m.id })),
+//   create: validatedData.images?.map((img) => ({
+//     url: img.url,
+//     public_id: img.public_id,
+//   })) ?? [],
+// },
+  },
+  include: { media: true },
+});
+
+// 3. Cloudinary cleanup only after DB succeeds
+await Promise.allSettled(
+  imagesToDelete.map((m) =>
+    cloudinary.uploader.destroy(m.public_id, { invalidate: true })
+  )
+);
+    return res.status(200).json(apiResponse(200, updatedPackage));
   } catch (error) {
-      if (error instanceof ZodError) {
+    console.error("Error updating package:", error);
+    if (error instanceof ZodError) {
       return res.status(400).json({
         success: false,
         message: "Validation failed",
@@ -86,10 +166,6 @@ export const getPackages = async (req:Request , res:Response ) => {
         })),
       });
     }
-    console.error("Error creating package:", error);
     res.status(500).json({ message: "Internal server error" });
   }
-  
-  
-
-}
+};

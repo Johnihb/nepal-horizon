@@ -104,7 +104,7 @@ enum Role {
 model Media {
   id        Int    @id @default(autoincrement())
   url       String
-  public_id String
+  public_id String @unique
 
   packageId String
   package   Package @relation(fields: [packageId], references: [id], onDelete: Cascade)

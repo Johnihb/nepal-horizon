@@ -12,5 +12,5 @@ export const packageSchema = z.object({
         url: z.string().url(),
       }),
     )
-    .optional(),
+    ,
 });
