@@ -4,8 +4,14 @@ import "dotenv/config";
 import { auth } from "./lib/auth.ts";
 import cors from "cors"
 import morgan from "morgan";
-import packagesRouter from "./routes/package.routes.ts";
+
+
 import imageRouter from "./routes/image.route.ts";
+import adminRouter from "./routes/admin.route.ts";
+import userRouter from "./routes/user.route.ts";
+
+
+
 const app = express();
 const PORT:number = Number(process.env.PORT) || 5000;
 
@@ -35,7 +41,8 @@ app.use(express.json());
 
 
 
-app.use("/api/packages",packagesRouter);
+app.use("/api/v1/admin",adminRouter);
+app.use("/api/v1/user",userRouter);
 app.use("/api/images", imageRouter);
 
 
