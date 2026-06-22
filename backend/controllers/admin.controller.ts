@@ -126,3 +126,24 @@ await Promise.allSettled(
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+
+export const deletePackage = async (req:Request , res: Response)=>{
+  try {
+    const { id } = req.params;
+    if(!id || typeof id !== 'string' || id.trim().length === 0) return res.status(400).json(apiResponse(400, { message: "Invalid package ID" }));
+    const dbPackage = await prisma.package.findUnique({ where: { id: id as string }, include: { media: true } });
+    if(!dbPackage) return res.status(404).json(apiResponse(404, { message: "Package not found" }));
+    const deleteDBImages = await prisma.media.deleteMany({ where: { packageId: id as string } });
+    const deleteDBPackage = await prisma.package.delete({ where: { id: id as string } });
+    // Cloudinary cleanup after DB deletion succeeds
+    const cloudinaryResults = await Promise.allSettled(dbPackage.media.map((media) => cloudinary.uploader.destroy(media.public_id, {invalidate: true})));
+    const failedDeletions = cloudinaryResults.filter(r => r.status === 'rejected');
+    if(failedDeletions.length > 0) {
+      console.warn(`Failed to delete ${failedDeletions.length} Cloudinary images for package ${id}`);
+    }
+    return res.status(200).json(apiResponse(200, { message: "Package deleted successfully" }));    
+  } catch (error) {
+    res.status(500).json(apiResponse(500, { message: "Internal server error" }));
+  }
+}
