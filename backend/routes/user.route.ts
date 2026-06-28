@@ -1,9 +1,11 @@
 import { Router } from "express";
-import { deletePackage, getPackages } from "../controllers/user.controller.ts";
+import { bookPackage, deletePackage, getPackages } from "../controllers/user.controller.ts";
+import { requireAuth } from "../middleware/auth.middleware.ts";
 
 const userRouter = Router()
 
 userRouter.get("/packages",getPackages)
-userRouter.delete('/package/:packageId',deletePackage)
+userRouter.post("/package/booking/:packageId",requireAuth,  bookPackage)
+userRouter.delete('/package/:packageId',requireAuth ,deletePackage)
 
 export default userRouter

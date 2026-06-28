@@ -73,3 +73,21 @@ export const deletePackage = async (req:Request , res:Response)=>{
   })
 
 }
+
+export const bookPackage = async (req:Request , res:Response)=>{
+  try {
+    const { packageId } = req.params;
+    if(!packageId || typeof packageId !== 'string' || packageId.trim().length === 0) return res.status(400).json(apiResponse(400, { message: "Invalid package ID" }));
+    const userId = req.session?.user.id;
+    if(!userId || !req.session?.user) return res.status(401).json(apiResponse(401, { message: "Unauthorized" }));
+    const updatedUser = await prisma.booking.create({
+      data: {
+        userId: userId,
+        packageId: packageId
+      }
+    })
+    return res.status(200).json(apiResponse(200, { message: "Package booked successfully" }));
+  } catch (error) {
+    res.status(500).json(apiResponse(500, { message: "Internal server error" }));
+  }
+}
