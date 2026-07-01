@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import { prisma } from "../lib/prisma.ts";
 import { apiResponse } from "../helpers/apiResponse.ts";
-import { ZodError } from "zod";
+import z, { ZodError } from "zod";
 import { offsetValueSchema } from "../types/package.ts";
 
 export const getPackages = async (req: Request, res: Response) => {
@@ -90,4 +90,19 @@ export const bookPackage = async (req:Request , res:Response)=>{
   } catch (error) {
     res.status(500).json(apiResponse(500, { message: "Internal server error" }));
   }
+}
+
+
+const validatPackageId=z.object({
+  packageId:z.string().uuid()
+})
+export const getPackageDetail = async (req:Request , res:Response)=>{
+  const { packageId } = req.params;
+  const validId = validatPackageId.safeParse({packageId})
+  if(!validId.success){
+    return res.status(400).json(apiResponse(400, { message: "Invalid package ID" }));
+  }
+  const dbPackage = await prisma.package.findUnique({ where: { id: validId.data.packageId }, include: { media: true } });
+  if(!dbPackage) return res.status(404).json(apiResponse(404, { message: "Package not found" }));
+  return res.status(200).json(apiResponse(200, dbPackage));
 }

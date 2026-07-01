@@ -52,7 +52,7 @@ model Package {
 
 
 model Booking{
-  id String @id @default(cuid())
+  id String @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   userId String
@@ -118,7 +118,7 @@ enum Role {
 }
 
 model Media {
-  id        Int    @id @default(autoincrement())
+  id        String    @id  @default(uuid())
   url       String
   public_id String @unique
 

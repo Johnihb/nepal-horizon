@@ -4,7 +4,7 @@ import { requireAuth } from "../middleware/auth.middleware.ts";
 
 const imageRouter = Router();
 
-imageRouter.get("/", requireAuth, imageSignedUrl);
+imageRouter.get("/", requireAuth ,imageSignedUrl);
 imageRouter.delete("/:id", requireAuth, deleteImage);
 imageRouter.delete('/package/:packageId' , requireAuth, deleteImages);
 export default imageRouter
