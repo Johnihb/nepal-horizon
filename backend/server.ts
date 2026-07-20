@@ -5,10 +5,10 @@ import { auth } from "./lib/auth.ts";
 import cors from "cors"
 import morgan from "morgan";
 
-
 import imageRouter from "./routes/image.route.ts";
 import adminRouter from "./routes/admin.route.ts";
 import userRouter from "./routes/user.route.ts";
+import bookingAnalyticsRoute from "./routes/bookingAnalytics.route.ts";
 
 
 
@@ -43,7 +43,9 @@ app.use(express.json());
 
 app.use("/api/v1/admin",adminRouter);
 app.use("/api/v1/user",userRouter);
-app.use("/api/images", imageRouter);
+app.use("/apiv1//images", imageRouter);
+app.use("/api/v1/bookingAnalytics" , bookingAnalyticsRoute)
+
 
 
 

@@ -18,3 +18,12 @@ export const packageSchema = z.object({
 export const offsetValueSchema = z.object({
   offset: z.coerce.number().int().min(0).optional(), // coerce handles string → number,
 });
+
+export const validatePackageId = z.object({
+  packageId: z.string().uuid(),
+});
+
+export const validatePackageRequest = z.object({
+  people: z.number().min(1),
+  date: z.iso.date(),
+});
