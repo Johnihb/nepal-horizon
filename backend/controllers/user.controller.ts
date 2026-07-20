@@ -109,7 +109,6 @@ export const bookPackage = async (req: Request, res: Response) => {
         .json(apiResponse(404, { message: "Package not found" }));
 
         const booking = await prisma.booking.findMany()
-        console.log(booking)
 
 
 
