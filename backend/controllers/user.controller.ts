@@ -152,3 +152,27 @@ export const getPackageDetail = async (req: Request, res: Response) => {
       .json(apiResponse(404, { message: "Package not found" }));
   return res.status(200).json(apiResponse(200, dbPackage));
 };
+
+
+export const getBookedPackages = async(req:Request, res:Response) =>{
+  try {
+    const userId = req.session?.user.id as string;
+    const packages = await prisma.package.findMany({
+      where: {
+        bookings: {
+          some: {
+            userId: userId
+          }
+        },      
+      },
+    });
+
+    if (!packages || packages.length === 0) {
+      return res.status(404).json(apiResponse(404, { message: "Oops! No packages found" }));
+    }
+
+    return res.status(200).json(apiResponse(200, packages));
+  } catch (error) {
+   return res.status(500).json(apiResponse(500, { message: "Internal server error" })); 
+  }
+}
