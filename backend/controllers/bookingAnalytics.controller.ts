@@ -1,13 +1,14 @@
 import type { Request, Response } from "express";
 import { apiResponse } from "../helpers/apiResponse.ts";
 import { prisma } from "../lib/prisma.ts";
+import type { Analytics } from "../types/analytics.ts";
 
 export const days = async (req: Request, res: Response) => {
   try {
     const now = new Date();
     const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
-    const dailyBookings = await prisma.$queryRaw`
+    const dailyBookings: Analytics = await prisma.$queryRaw`
   SELECT 
     DATE("createdAt") AS timestamp,
     COUNT(*)::integer AS count,
@@ -40,7 +41,7 @@ export const weeks = async (req: Request, res: Response) => {
   try {
     const now = new Date();
 
-    const weekAnalytics = await prisma.$queryRaw`
+    const weekAnalytics: Analytics = await prisma.$queryRaw`
   SELECT 
     date_trunc('week', "createdAt")::date AS "timestamp",
     COUNT(*)::integer AS count,
@@ -73,7 +74,7 @@ export const months = async (req: Request, res: Response) => {
   try {
     const now = new Date();
 
-    const monthAnalytics = await prisma.$queryRaw`
+    const monthAnalytics: Analytics = await prisma.$queryRaw`
   SELECT 
     date_trunc('month', "createdAt")::date AS "timestamp",
     COUNT(*)::integer AS count,
