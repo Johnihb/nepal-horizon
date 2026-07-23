@@ -2,3 +2,5 @@ node_modules
 .env
 frontend
 daas.ts
+.kombai
+.excalidraw
