@@ -52,5 +52,23 @@ return res.status(200).json(apiResponse(200, { message: "ok", data: weekAnalytic
 }
 
 export const months = async (req: Request, res: Response) => {
-  return res.json({message:"hello"})
+const now = new Date();
+
+const monthAnalytics = await prisma.$queryRaw`
+  SELECT 
+    date_trunc('month', "createdAt")::date AS "timestamp",
+    COUNT(*)::integer AS count,
+    SUM("price")::integer AS revenue,
+    SUM("totalPeople")::integer AS "totalPeople"
+  FROM "Booking"
+  WHERE "createdAt" >= date_trunc('month', ${now}::timestamptz) - interval '5 months'
+    AND "createdAt" < date_trunc('month', ${now}::timestamptz) + interval '1 month'
+    AND "status" != 'CANCELLED'
+  GROUP BY date_trunc('month', "createdAt")
+  ORDER BY "timestamp" ASC
+`;
+
+console.log('Past 6 months analytics:', monthAnalytics);
+
+return res.status(200).json(apiResponse(200, { message: "ok", data: monthAnalytics }));
 }
