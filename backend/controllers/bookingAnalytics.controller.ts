@@ -1,13 +1,13 @@
-import type { Request, Response } from "express"
+import type { Request, Response } from "express";
 import { apiResponse } from "../helpers/apiResponse.ts";
 import { prisma } from "../lib/prisma.ts";
 
 export const days = async (req: Request, res: Response) => {
-const now = new Date();
-const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  try {
+    const now = new Date();
+    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
-
-const dailyBookings = await prisma.$queryRaw`
+    const dailyBookings = await prisma.$queryRaw`
   SELECT 
     DATE("createdAt") AS timestamp,
     COUNT(*)::integer AS count,
@@ -21,17 +21,26 @@ const dailyBookings = await prisma.$queryRaw`
   ORDER BY DATE("createdAt") ASC
 `;
 
+    if (!dailyBookings || dailyBookings?.length === 0)
+      return res
+        .status(404)
+        .json(apiResponse(404, { message: "No bookings found" }));
 
-console.log("Daily Sales for the last 7 days:", dailyBookings);
-
-return res.status(200).json(apiResponse(200,{message:"ok", data:dailyBookings}))
-  
-}
+    return res
+      .status(200)
+      .json(apiResponse(200, { message: "ok", data: dailyBookings }));
+  } catch (error) {
+    return res
+      .status(500)
+      .json(apiResponse(500, { message: "Internal server error" }));
+  }
+};
 
 export const weeks = async (req: Request, res: Response) => {
-const now = new Date();
+  try {
+    const now = new Date();
 
-const weekAnalytics = await prisma.$queryRaw`
+    const weekAnalytics = await prisma.$queryRaw`
   SELECT 
     date_trunc('week', "createdAt")::date AS "timestamp",
     COUNT(*)::integer AS count,
@@ -45,16 +54,26 @@ const weekAnalytics = await prisma.$queryRaw`
   ORDER BY "timestamp" ASC
 `;
 
-console.log('Past 7 weeks analytics:', weekAnalytics);
+    if (!weekAnalytics || weekAnalytics?.length === 0)
+      return res
+        .status(404)
+        .json(apiResponse(404, { message: "No bookings found" }));
 
-return res.status(200).json(apiResponse(200, { message: "ok", data: weekAnalytics }));
-
-}
+    return res
+      .status(200)
+      .json(apiResponse(200, { message: "ok", data: weekAnalytics }));
+  } catch (error) {
+    return res
+      .status(500)
+      .json(apiResponse(500, { message: "Internal server error" }));
+  }
+};
 
 export const months = async (req: Request, res: Response) => {
-const now = new Date();
+  try {
+    const now = new Date();
 
-const monthAnalytics = await prisma.$queryRaw`
+    const monthAnalytics = await prisma.$queryRaw`
   SELECT 
     date_trunc('month', "createdAt")::date AS "timestamp",
     COUNT(*)::integer AS count,
@@ -68,7 +87,17 @@ const monthAnalytics = await prisma.$queryRaw`
   ORDER BY "timestamp" ASC
 `;
 
-console.log('Past 6 months analytics:', monthAnalytics);
+    if (!monthAnalytics || monthAnalytics?.length === 0)
+      return res
+        .status(404)
+        .json(apiResponse(404, { message: "No bookings found" }));
 
-return res.status(200).json(apiResponse(200, { message: "ok", data: monthAnalytics }));
-}
+    return res
+      .status(200)
+      .json(apiResponse(200, { message: "ok", data: monthAnalytics }));
+  } catch (error) {
+    return res
+      .status(500)
+      .json(apiResponse(500, { message: "Internal server error" }));
+  }
+};
