@@ -10,7 +10,16 @@ import { v2 as cloudinary } from "cloudinary";
 export const postPackage = async (req: Request, res: Response) => {
   try {
     const request = req.body;
-    console.log("request", typeof request.price);
+    const imageResults = await Promise.allSettled(
+      (request?.images ?? []).map((img: { public_id: string }) =>
+        cloudinary.api.resource(img.public_id)
+      )
+    );
+
+    if (imageResults.some(result => result.status === "rejected")) {
+      return res.status(400).json(apiResponse(400, "One or more images do not exist in Cloudinary" ));
+    }
+
     const validatedData = packageSchema.parse(request);
 
     const newPackage = await prisma.package.create({
