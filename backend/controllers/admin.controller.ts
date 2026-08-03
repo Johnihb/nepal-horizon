@@ -4,23 +4,56 @@ import z, { number, ZodError } from "zod";
 import { apiResponse } from "../helpers/apiResponse.ts";
 import { packageSchema } from "../types/package.ts";
 import { v2 as cloudinary } from "cloudinary";
+import cloudinaryConfig from "../lib/cloudinaryStorage.ts";
 
-
+cloudinaryConfig; // Ensure Cloudinary is configured
 
 export const postPackage = async (req: Request, res: Response) => {
   try {
     const request = req.body;
+    const validatedData = packageSchema.parse(request);
     const imageResults = await Promise.allSettled(
-      (request?.images ?? []).map((img: { public_id: string }) =>
+      (validatedData.images ?? []).map((img) =>
         cloudinary.api.resource(img.public_id)
       )
     );
 
-    if (imageResults.some(result => result.status === "rejected")) {
-      return res.status(400).json(apiResponse(400, "One or more images do not exist in Cloudinary" ));
-    }
+    const rejectedImageResults = imageResults.filter(
+      (result): result is PromiseRejectedResult => result.status === "rejected"
+    );
 
-    const validatedData = packageSchema.parse(request);
+    if (rejectedImageResults.length > 0) {
+      const isCloudinaryError = (reason: unknown): reason is { http_code?: number } =>
+        typeof reason === "object" && reason !== null && "http_code" in reason;
+
+      const isMissingResource = (reason: unknown) =>
+        isCloudinaryError(reason) && reason.http_code === 404;
+
+      const isRetryableCloudinaryFailure = (reason: unknown) =>
+        reason instanceof Error ||
+        (isCloudinaryError(reason) && [429, 502, 503, 504].includes(reason.http_code ?? 0));
+
+      if (rejectedImageResults.every((result) => isMissingResource(result.reason))) {
+        return res
+          .status(400)
+          .json(apiResponse(400, "One or more images do not exist in Cloudinary"));
+      }
+
+      if (rejectedImageResults.some((result) => isRetryableCloudinaryFailure(result.reason))) {
+        return res.status(503).json(
+          apiResponse(503, {
+            message: "Cloudinary service temporarily unavailable. Please try again later.",
+          })
+        );
+      }
+
+      const firstRejected = rejectedImageResults[0];
+      if (!firstRejected) {
+        throw new Error("Image validation failed unexpectedly");
+      }
+
+      throw firstRejected.reason;
+    }
 
     const newPackage = await prisma.package.create({
       data: {
@@ -43,6 +76,8 @@ export const postPackage = async (req: Request, res: Response) => {
       },
     });
     return res.status(201).json(apiResponse(201, newPackage));
+  
+  
   } catch (error) {
     console.log("error", error);
     if (error instanceof ZodError) {
@@ -55,6 +90,7 @@ export const postPackage = async (req: Request, res: Response) => {
         })),
       });
     }
+
     console.error("Error creating package:", error);
     return res.status(500).json({ message: "Internal server error" });
   }

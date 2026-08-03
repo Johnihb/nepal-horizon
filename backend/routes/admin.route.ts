@@ -4,7 +4,9 @@ import {  deletePackage, postPackage, updatePackage } from "../controllers/admin
 
 const adminRouter = express.Router();
 
-adminRouter.post("/", requireAuth, postPackage);adminRouter.patch("/:id",requireAuth ,updatePackage);
+// adminRouter.post("/", requireAuth, postPackage);
+adminRouter.post("/",  postPackage);
+adminRouter.patch("/:id",requireAuth ,updatePackage);
 adminRouter.delete("/:id",requireAuth ,deletePackage);
 
 
