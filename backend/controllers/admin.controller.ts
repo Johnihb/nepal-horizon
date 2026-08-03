@@ -12,12 +12,19 @@ export const postPackage = async (req: Request, res: Response) => {
   try {
     const request = req.body;
     const validatedData = packageSchema.parse(request);
+const withTimeout = <T>(promise: Promise<T>, ms: number) =>
+  Promise.race([
+    promise,
+    new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error("Cloudinary request timed out")), ms)
+    ),
+  ]);
+
     const imageResults = await Promise.allSettled(
       (validatedData.images ?? []).map((img) =>
-        cloudinary.api.resource(img.public_id)
+        withTimeout(cloudinary.api.resource(img.public_id), 5000)
       )
     );
-
     const rejectedImageResults = imageResults.filter(
       (result): result is PromiseRejectedResult => result.status === "rejected"
     );
@@ -36,7 +43,7 @@ export const postPackage = async (req: Request, res: Response) => {
       if (rejectedImageResults.every((result) => isMissingResource(result.reason))) {
         return res
           .status(400)
-          .json(apiResponse(400, "One or more images do not exist in Cloudinary"));
+          .json(apiResponse(400, { message: "One or more images do not exist in Cloudinary" }));
       }
 
       if (rejectedImageResults.some((result) => isRetryableCloudinaryFailure(result.reason))) {
@@ -46,7 +53,6 @@ export const postPackage = async (req: Request, res: Response) => {
           })
         );
       }
-
       const firstRejected = rejectedImageResults[0];
       if (!firstRejected) {
         throw new Error("Image validation failed unexpectedly");
