@@ -38,6 +38,12 @@ half of the range it sits on:
 encode data — booking status, chart series, an accent word. Never as
 decoration, never as a button fill.
 
+**Landing atmosphere (home only).** The landing route may carry low-saturation
+ambient colour as atmosphere, never as chrome: `--nh-dawn` (#c99a3a),
+`--nh-ridge` (#4a7c8a), `--nh-prayer` (#9b3a32), `--nh-stone` (#e8e2d6).
+Used only in blurred background shapes, section gradients and the 3D route
+line. Still no neon or saturated fills.
+
 **Data on the ink shell.** Anything that draws data on `.nh-page--ink` — the
 booking chart, the stat rules — uses that shell's own tokens: `--nh-accent`
 (`#6fc6ce`) for bookings, `--nh-accent-2` (`#e7a25a`) for revenue,

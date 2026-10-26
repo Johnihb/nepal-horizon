@@ -112,6 +112,19 @@ export default function NepalHorizon() {
 
       <section className="nh-hero" id="top" aria-labelledby="nh-title">
         <div className="nh-hero-stage">
+          <div className="nh-hero-atmosphere" aria-hidden="true">
+            <span className="nh-shape nh-shape--sun" />
+            <span className="nh-shape nh-shape--ridge" />
+            <span className="nh-shape nh-shape--prayer" />
+            <span className="nh-shape nh-shape--stone" />
+            <div className="nh-hero-shape-lines">
+              <svg viewBox="0 0 1440 900" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 720 C240 640 480 690 720 600 C960 510 1200 560 1440 470" stroke="var(--nh-dawn)" strokeWidth="1" opacity="0.5" />
+                <path d="M0 780 C280 700 520 760 760 680 C1000 600 1240 650 1440 570" stroke="var(--nh-ridge)" strokeWidth="1" opacity="0.4" />
+                <path d="M0 840 C300 780 560 820 800 760 C1040 700 1280 740 1440 680" stroke="var(--nh-prayer)" strokeWidth="1" opacity="0.3" />
+              </svg>
+            </div>
+          </div>
           <NepalHorizonScene />
           <div className="nh-hero-veil" aria-hidden="true" />
 
@@ -169,6 +182,17 @@ export default function NepalHorizon() {
       </section>
 
       <section className="nh-manifesto" id="approach" aria-labelledby="approach-title">
+        <div className="nh-decor nh-decor--manifesto" aria-hidden="true">
+          <svg className="nh-decor-sun" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="100" cy="100" r="46" fill="var(--nh-dawn)" opacity="0.55" />
+            <circle cx="100" cy="100" r="70" stroke="var(--nh-dawn)" strokeWidth="1" opacity="0.35" />
+            <circle cx="100" cy="100" r="92" stroke="var(--nh-dawn)" strokeWidth="0.6" opacity="0.2" />
+          </svg>
+          <svg className="nh-decor-mountain" viewBox="0 0 1440 260" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 260 C 90 210, 170 175, 260 190 C 360 205, 420 135, 560 150 C 700 165, 760 95, 900 110 C 1040 125, 1100 70, 1240 95 C 1340 115, 1390 150, 1440 135 L1440 260 Z" fill="var(--nh-ridge)" opacity="0.18" />
+            <path d="M0 260 C 120 225, 220 200, 340 210 C 460 220, 520 160, 660 175 C 800 190, 860 120, 1000 135 C 1140 150, 1200 105, 1320 125 C 1390 138, 1420 160, 1440 150 L1440 260 Z" fill="var(--nh-dawn)" opacity="0.12" />
+          </svg>
+        </div>
         <p className="nh-section-index nh-reveal">Our Approach <span>01</span></p>
         <div className="nh-manifesto-grid">
           <h2 className="nh-reveal" id="approach-title">Travel Is More<br />Interesting When<br /><em>Nothing Rushes.</em></h2>
@@ -258,6 +282,14 @@ export default function NepalHorizon() {
       </section>
 
       <section className="nh-inquire" id="inquire" aria-labelledby="inquire-title">
+        <div className="nh-decor nh-decor--inquire" aria-hidden="true">
+          <svg className="nh-decor-bloom" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="120" cy="120" r="30" fill="var(--nh-dawn)" opacity="0.45" />
+            <circle cx="120" cy="120" r="60" stroke="var(--nh-dawn)" strokeWidth="1" opacity="0.3" />
+            <circle cx="120" cy="120" r="90" stroke="var(--nh-prayer)" strokeWidth="0.8" opacity="0.22" />
+            <circle cx="120" cy="120" r="118" stroke="var(--nh-ridge)" strokeWidth="0.6" opacity="0.18" />
+          </svg>
+        </div>
         <p className="nh-section-index nh-reveal">Start Here <span>04</span></p>
         <div className="nh-inquire-content nh-reveal">
           <h2 id="inquire-title">The Route Begins<br />With A <em>Question.</em></h2>
