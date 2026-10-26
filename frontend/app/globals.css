@@ -4,6 +4,8 @@
 
 @custom-variant dark (&:is(.dark *));
 
+
+
 @theme inline {
   --font-sans: var(--font-display);
   --font-heading: var(--font-display);
@@ -157,6 +159,11 @@ html:has(.nh-route) {
   --nh-mist: #bdbdbd;
   --nh-paper: #fff;
   --nh-line: rgba(255, 255, 255, 0.26);
+  --nh-dawn: #c99a3a;
+  --nh-ridge: #4a7c8a;
+  --nh-prayer: #9b3a32;
+  --nh-stone: #e8e2d6;
+  --nh-glow: #7a6a4a;
   background: var(--nh-ink);
   color: var(--nh-paper);
   font-family: var(--font-display), Arial, sans-serif;
@@ -225,16 +232,106 @@ html:has(.nh-route) {
     linear-gradient(145deg, #171717 8%, #0a0a0a 62%);
 }
 
+/* Ambient atmosphere — muted, non-neon colour. Sits behind the 3D scene. */
+.nh-hero-atmosphere {
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  position: absolute;
+  z-index: 0;
+}
+
+.nh-shape {
+  border-radius: 999px;
+  filter: blur(72px);
+  mix-blend-mode: screen;
+  opacity: 0.42;
+  position: absolute;
+  will-change: transform;
+}
+
+.nh-shape--sun {
+  animation: nh-drift 22s ease-in-out infinite;
+  background: radial-gradient(circle, var(--nh-dawn) 0%, transparent 70%);
+  height: 46vw;
+  right: -8%;
+  top: -12%;
+  width: 46vw;
+}
+
+.nh-shape--ridge {
+  animation: nh-drift 28s ease-in-out infinite reverse;
+  background: radial-gradient(circle, var(--nh-ridge) 0%, transparent 72%);
+  bottom: -18%;
+  height: 52vw;
+  left: -12%;
+  opacity: 0.34;
+  width: 52vw;
+}
+
+.nh-shape--prayer {
+  animation: nh-float 16s ease-in-out infinite;
+  background: radial-gradient(circle, var(--nh-prayer) 0%, transparent 70%);
+  height: 28vw;
+  left: 38%;
+  opacity: 0.26;
+  top: 18%;
+  width: 28vw;
+}
+
+.nh-shape--stone {
+  animation: nh-float 20s ease-in-out infinite reverse;
+  background: radial-gradient(circle, var(--nh-stone) 0%, transparent 74%);
+  bottom: 8%;
+  height: 24vw;
+  opacity: 0.16;
+  right: 22%;
+  width: 24vw;
+}
+
+.nh-hero-shape-lines {
+  inset: 0;
+  opacity: 0.18;
+  position: absolute;
+  z-index: 0;
+}
+
+.nh-hero-shape-lines svg {
+  height: 100%;
+  width: 100%;
+}
+
+.nh-hero-shape-lines path {
+  stroke-dasharray: 6 10;
+  animation: nh-dash 18s linear infinite;
+}
+
+@keyframes nh-dash {
+  to { stroke-dashoffset: -240; }
+}
+
+@keyframes nh-drift {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(3%, -4%, 0) scale(1.06); }
+}
+
+@keyframes nh-float {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(-2%, 3%, 0); }
+}
+
 .nh-static-mountain {
-  background: var(--nh-paper);
   bottom: -16%;
-  clip-path: polygon(0 80%, 9% 58%, 18% 70%, 36% 17%, 49% 56%, 63% 35%, 72% 64%, 86% 28%, 100% 77%, 100% 100%, 0 100%);
   display: none;
   height: 72%;
   left: 0;
   opacity: 0.8;
   position: absolute;
   width: 100%;
+}
+
+.nh-static-mountain path {
+  vector-effect: non-scaling-stroke;
 }
 
 .nh-scene-fallback .nh-static-mountain {
@@ -387,7 +484,7 @@ html:has(.nh-route) {
 }
 
 .nh-kicker span {
-  color: var(--nh-paper);
+  color: var(--nh-dawn);
 }
 
 .nh-hero h1,
@@ -405,6 +502,10 @@ html:has(.nh-route) {
 .nh-hero h1 {
   font-size: clamp(4.3rem, 10.4vw, 10.75rem);
   max-width: 40rem;
+}
+
+.nh-hero h1 em {
+  color: var(--nh-dawn);
 }
 
 .nh-route em {
@@ -532,8 +633,43 @@ html:has(.nh-route) {
 }
 
 .nh-manifesto {
-  background: var(--nh-paper);
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 20%, rgba(201, 154, 58, 0.16), transparent 60%),
+    radial-gradient(ellipse 70% 50% at 85% 80%, rgba(74, 124, 138, 0.12), transparent 60%),
+    var(--nh-paper);
   color: var(--nh-ink);
+  position: relative;
+  overflow: hidden;
+}
+
+.nh-decor {
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+  z-index: 0;
+}
+
+.nh-decor svg {
+  height: 100%;
+  width: 100%;
+}
+
+.nh-decor--manifesto .nh-decor-mountain {
+  animation: nh-float 24s ease-in-out infinite;
+  bottom: -2%;
+  left: 0;
+  opacity: 0.18;
+  position: absolute;
+  width: 100%;
+}
+
+.nh-decor--manifesto .nh-decor-sun {
+  animation: nh-drift 20s ease-in-out infinite;
+  opacity: 0.22;
+  position: absolute;
+  right: 8%;
+  top: 10%;
+  width: 18vw;
 }
 
 .nh-section-index {
@@ -545,6 +681,11 @@ html:has(.nh-route) {
 .nh-section-index span {
   color: currentColor;
   opacity: 0.62;
+}
+
+.nh-manifesto > :not(.nh-decor) {
+  position: relative;
+  z-index: 1;
 }
 
 .nh-manifesto-grid {
@@ -574,6 +715,29 @@ html:has(.nh-route) {
 .nh-journeys {
   background: var(--nh-charcoal);
   padding-bottom: clamp(5.5rem, 11vw, 10rem);
+}
+
+.nh-journeys > :not(.nh-decor) {
+  position: relative;
+  z-index: 1;
+}
+
+.nh-decor--journeys .nh-decor-flags {
+  animation: nh-float 18s ease-in-out infinite;
+  opacity: 0.22;
+  position: absolute;
+  right: 4%;
+  top: 8%;
+  width: 34vw;
+}
+
+.nh-decor--journeys .nh-decor-contour {
+  animation: nh-drift 30s ease-in-out infinite reverse;
+  bottom: 0;
+  left: 0;
+  opacity: 0.12;
+  position: absolute;
+  width: 100%;
 }
 
 .nh-journeys-heading {
@@ -660,6 +824,49 @@ html:has(.nh-route) {
   grid-template-columns: repeat(3, 1fr);
 }
 
+.nh-details > .nh-decor {
+  grid-column: 1 / -1;
+}
+
+.nh-details > :not(.nh-decor) {
+  position: relative;
+  z-index: 1;
+}
+
+.nh-decor--details .nh-decor-peaks {
+  animation: nh-drift 34s ease-in-out infinite;
+  bottom: 0;
+  left: 0;
+  opacity: 0.16;
+  position: absolute;
+  width: 100%;
+}
+
+.nh-inquire {
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 80%, rgba(155, 58, 50, 0.14), transparent 60%),
+    radial-gradient(ellipse 60% 50% at 90% 20%, rgba(201, 154, 58, 0.12), transparent 60%),
+    var(--nh-paper);
+  color: var(--nh-ink);
+  min-height: 72svh;
+  position: relative;
+  overflow: hidden;
+}
+
+.nh-inquire > :not(.nh-decor) {
+  position: relative;
+  z-index: 1;
+}
+
+.nh-decor--inquire .nh-decor-bloom {
+  animation: nh-float 20s ease-in-out infinite;
+  opacity: 0.2;
+  position: absolute;
+  right: 6%;
+  top: 12%;
+  width: 26vw;
+}
+
 .nh-detail-card {
   border-right: 1px solid var(--nh-line);
   min-height: 32rem;
@@ -694,9 +901,14 @@ html:has(.nh-route) {
 }
 
 .nh-inquire {
-  background: var(--nh-paper);
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 80%, rgba(155, 58, 50, 0.14), transparent 60%),
+    radial-gradient(ellipse 60% 50% at 90% 20%, rgba(201, 154, 58, 0.12), transparent 60%),
+    var(--nh-paper);
   color: var(--nh-ink);
   min-height: 72svh;
+  position: relative;
+  overflow: hidden;
 }
 
 .nh-inquire-content {
@@ -860,9 +1072,95 @@ html:has(.nh-route) {
 .nh-process {
   background: var(--nh-charcoal);
   padding-block: clamp(5rem, 12vw, 11rem);
+  /* The ::before glow below is absolutely positioned; without this it anchors to
+     the page origin and covers the landing nav, swallowing its clicks. */
+  position: relative;
+}
+
+.nh-process::before {
+  animation: nh-drift 26s ease-in-out infinite;
+  background: radial-gradient(circle, rgba(201, 154, 58, 0.18), transparent 70%);
+  border-radius: 999px;
+  content: "";
+  filter: blur(80px);
+  height: 40vw;
+  mix-blend-mode: screen;
+  opacity: 0.5;
+  position: absolute;
+  right: -10%;
+  top: -15%;
+  width: 40vw;
+  z-index: 0;
+}
+
+.nh-process > :not(.nh-decor) {
+  position: relative;
+  z-index: 1;
+}
+
+.nh-decor--process .nh-decor-trees {
+  animation: nh-float 30s ease-in-out infinite;
+  bottom: 0;
+  left: 0;
+  opacity: 0.14;
+  position: absolute;
+  width: 100%;
+}
+
+.nh-decor--process .nh-decor-mist {
+  animation: nh-drift 22s ease-in-out infinite reverse;
+  background: radial-gradient(ellipse, rgba(74, 124, 138, 0.22), transparent 70%);
+  border-radius: 999px;
+  filter: blur(60px);
+  height: 30vw;
+  left: 10%;
+  opacity: 0.5;
+  position: absolute;
+  top: 15%;
+  width: 40vw;
+}
+
+/* Night elements shared by the dark sections */
+.nh-night-moon {
+  animation: nh-float 26s ease-in-out infinite;
+  opacity: 0.55;
+  position: absolute;
+  right: 8%;
+  top: 10%;
+  width: 12vw;
+}
+
+.nh-night-cloud {
+  animation: nh-drift 34s ease-in-out infinite;
+  opacity: 0.18;
+  position: absolute;
+}
+
+.nh-night-cloud--a {
+  left: 6%;
+  top: 18%;
+  width: 26vw;
+}
+
+.nh-night-cloud--b {
+  right: 14%;
+  top: 55%;
+  width: 22vw;
+  animation-delay: -8s;
+}
+
+.nh-night-stars {
+  animation: nh-float 40s ease-in-out infinite;
+  opacity: 0.5;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .nh-process-grid {
+  position: relative;
+  z-index: 1;
   align-items: start;
   display: grid;
   gap: clamp(2.75rem, 6vw, 7rem);
