@@ -14,7 +14,8 @@ if (!githubClientId || !githubClientSecret) {
 
 
 export const auth = betterAuth({
-    database: prismaAdapter(prisma, {
+  baseURL:process.env.BETTER_AUTH_URL || "http://localhost:5000", 
+  database: prismaAdapter(prisma, {
         provider: "postgresql", // or "mysql", "postgresql", ...etc
     }),  account: {
     accountLinking: {
@@ -24,6 +25,11 @@ export const auth = betterAuth({
   },
     emailAndPassword: {
     enabled: true,
+  },
+  user: {
+    additionalFields: {
+      role: { type: "string", required: false, defaultValue: "USER", input: false },
+    },
   },
   socialProviders: {
     github: {
