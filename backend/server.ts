@@ -9,6 +9,7 @@ import imageRouter from "./routes/image.route.ts";
 import adminRouter from "./routes/admin.route.ts";
 import userRouter from "./routes/user.route.ts";
 import bookingAnalyticsRoute from "./routes/bookingAnalytics.route.ts";
+import { adminAuth } from "./middleware/adminAuth.middeware.ts";
 
 
 
@@ -41,10 +42,10 @@ app.use(express.json());
 
 
 
-app.use("/api/v1/admin",adminRouter);
+app.use("/api/v1/admin",adminAuth ,adminRouter);
 app.use("/api/v1/user",userRouter);
-app.use("/apiv1//images", imageRouter);
-app.use("/api/v1/bookingAnalytics" , bookingAnalyticsRoute)
+app.use("/api/v1/images", adminAuth, imageRouter);
+app.use("/api/v1/bookingAnalytics" ,adminAuth, bookingAnalyticsRoute)
 
 
 
