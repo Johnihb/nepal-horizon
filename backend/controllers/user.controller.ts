@@ -24,7 +24,7 @@ export const getPackages = async (req: Request, res: Response) => {
       skip: offset,
       take: 5,
     });
-    console.log("packages", packages);
+    console.log("packages", packages[0]?.media);
     res.status(200).json(
       apiResponse(200, {
         packages,
