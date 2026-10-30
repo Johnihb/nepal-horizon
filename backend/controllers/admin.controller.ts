@@ -2,12 +2,12 @@ import type { Request, Response } from "express";
 import { prisma } from "../lib/prisma.ts";
 import z, { number, ZodError } from "zod";
 import { apiResponse } from "../helpers/apiResponse.ts";
-import { packageSchema } from "../types/package.ts";
+import { packageSchema, filterBookingsSchema, validateBookingStatus } from "../types/package.ts";
 import { v2 as cloudinary } from "cloudinary";
 import cloudinaryConfig from "../lib/cloudinaryStorage.ts";
 
 cloudinaryConfig; // Ensure Cloudinary is configured
-
+//? creates a new package
 export const postPackage = async (req: Request, res: Response) => {
   try {
     const request = req.body;
@@ -85,7 +85,7 @@ const withTimeout = <T>(promise: Promise<T>, ms: number) =>
   
   
   } catch (error) {
-    console.log("error", error);
+    console.error("error", error);
     if (error instanceof ZodError) {
       return res.status(400).json({
         success: false,
@@ -103,7 +103,7 @@ const withTimeout = <T>(promise: Promise<T>, ms: number) =>
 };
 
 
-
+//* updates the package 
 export const updatePackage = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -178,7 +178,7 @@ await Promise.allSettled(
   }
 };
 
-
+//! deletes the package
 export const deletePackage = async (req:Request , res: Response)=>{
   try {
     const { id } = req.params;
@@ -195,5 +195,80 @@ export const deletePackage = async (req:Request , res: Response)=>{
     return res.status(200).json(apiResponse(200, { message: "Package deleted successfully" }));    
   } catch (error) {
     res.status(500).json(apiResponse(500, { message: "Internal server error" }));
+  }
+}
+
+
+//* lists every booking, the ones still waiting on the field office first
+export const getBookings = async (req: Request, res: Response) => {
+  try {
+    const { status } = filterBookingsSchema.parse(req.query);
+
+    const bookings = await prisma.booking.findMany({
+      // exactOptionalPropertyTypes forbids an explicit `where: undefined`.
+      ...(status ? { where: { status } } : {}),
+      include: {
+        package: { select: { id: true, name: true, location: true } },
+        user: { select: { name: true, email: true } },
+      },
+      // Enum order is PENDING → CONFIRMED → CANCELLED, so the queue reads first.
+      orderBy: [{ status: "asc" }, { createdAt: "desc" }],
+    });
+
+    return res.status(200).json(apiResponse(200, bookings));
+  } catch (error) {
+    console.error("Error listing bookings:", error);
+    if (error instanceof ZodError) {
+      return res.status(400).json({
+        success: false,
+        message: "Validation failed",
+        errors: error?.issues?.map((e) => ({
+          field: e.path.join("."),
+          message: e.message,
+        })),
+      });
+    }
+    return res
+      .status(500)
+      .json(apiResponse(500, { message: "Internal server error" }));
+  }
+};
+
+//* updates the status of a booked package (PENDING → CONFIRMED / CANCELLED)
+export async function updatePackageStatus(req: Request, res: Response) {
+  try {
+    const validatedData = validateBookingStatus.parse(req.body);
+
+    const booking = await prisma.booking.findUnique({
+      where: { id: validatedData.id },
+    });
+
+    if (!booking) {
+      return res
+        .status(404)
+        .json(apiResponse(404, { message: "Booking not found" }));
+    }
+
+    const updatedBooking = await prisma.booking.update({
+      where: { id: validatedData.id },
+      data: { status: validatedData.status },
+    });
+
+    return res.status(200).json(apiResponse(200, updatedBooking));
+  } catch (error) {
+    console.error("Error updating booking status:", error);
+    if (error instanceof ZodError) {
+      return res.status(400).json({
+        success: false,
+        message: "Validation failed",
+        errors: error?.issues?.map((e) => ({
+          field: e.path.join("."),
+          message: e.message,
+        })),
+      });
+    }
+    return res
+      .status(500)
+      .json(apiResponse(500, { message: "Internal server error" }));
   }
 }
