@@ -8,10 +8,11 @@ import {
   deletePackage,
   fetchUploadSignature,
   toApiError,
+  updateBookingStatus,
   updatePackage,
   uploadImage,
 } from "@/lib/api";
-import type { BookingPayload, PackagePayload, UploadedImage } from "@/types/package";
+import type { BookingPayload, BookingStatus, PackagePayload, UploadedImage } from "@/types/package";
 
 /** Reserve a journey. */
 export function usePostBooking(packageId: string) {
@@ -66,11 +67,26 @@ export function useDeletePackage(packageId: string) {
   });
 }
 
+/** Settle a booking — confirm it or call it off. */
+export function useUpdateBookingStatus() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationKey: ["updateBookingStatus"],
+    mutationFn: ({ id, status }: { id: string; status: BookingStatus }) =>
+      updateBookingStatus(id, status),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["adminBookings"] });
+      // Confirming a booking moves the ledger the field office reads.
+      queryClient.invalidateQueries({ queryKey: ["bookingAnalytics"] });
+    },
+  });
+}
+
 /**
  * Upload files to Cloudinary. The API only signs the request — the bytes go
  * straight from the browser to Cloudinary.
- */
-export function useUploadImages() {
+ */export function useUploadImages() {
   return useMutation({
     mutationKey: ["uploadImages"],
     mutationFn: async (files: File[]) => {

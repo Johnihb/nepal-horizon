@@ -2,9 +2,11 @@ import { isAxiosError } from "axios";
 
 import axios from "@/lib/axios";
 import type {
+  AdminBooking,
   AnalyticsPoint,
   AnalyticsRange,
   BookingPayload,
+  BookingStatus,
   PackagePayload,
   PackagesPage,
   TravelPackage,
@@ -107,6 +109,14 @@ export async function fetchAnalytics(range: AnalyticsRange): Promise<AnalyticsPo
   return data.body?.data ?? [];
 }
 
+/** GET /admin/bookings — every booking, the ones awaiting a decision first. */
+export async function fetchBookings(status?: BookingStatus): Promise<AdminBooking[]> {
+  const { data } = await axios.get<{ body?: AdminBooking[] }>("/admin/bookings", {
+    params: { status },
+  });
+  return data.body ?? [];
+}
+
 /* -------------------------------------------------------------------------- */
 /* writes                                                                       */
 /* -------------------------------------------------------------------------- */
@@ -142,6 +152,11 @@ export async function deletePackage(packageId: string): Promise<void> {
 /** DELETE /images/package/:packageId — clears every image of a journey. */
 export async function deletePackageImages(packageId: string): Promise<void> {
   await axios.delete(`/images/package/${packageId}`);
+}
+
+/** PATCH /admin/booking/status — CONFIRMED or CANCELLED. */
+export async function updateBookingStatus(id: string, status: BookingStatus): Promise<void> {
+  await axios.patch("/admin/booking/status", { id, status });
 }
 
 /* -------------------------------------------------------------------------- */

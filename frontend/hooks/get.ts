@@ -2,8 +2,8 @@
 
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
-import { fetchAnalytics, fetchBookedPackages, fetchPackage, fetchPackages } from "@/lib/api";
-import type { AnalyticsRange } from "@/types/package";
+import { fetchAnalytics, fetchBookedPackages, fetchBookings, fetchPackage, fetchPackages } from "@/lib/api";
+import type { AnalyticsRange, BookingStatus } from "@/types/package";
 
 /**
  * Paginated journey list. `offset` is a page index, not a row offset — the
@@ -43,5 +43,16 @@ export function useBookingAnalytics(range: AnalyticsRange) {
     queryKey: ["bookingAnalytics", range],
     queryFn: () => fetchAnalytics(range),
     staleTime: 1000 * 60 * 5,
+  });
+}
+
+/** Every booking, pending first — the console's status queue. */
+export function useAdminBookings(status?: BookingStatus) {
+  return useQuery({
+    queryKey: ["adminBookings", status ?? "all"],
+    queryFn: () => fetchBookings(status),
+    // Switching the filter keeps the previous rows on screen instead of blanking.
+    placeholderData: keepPreviousData,
+    staleTime: 1000 * 30,
   });
 }
