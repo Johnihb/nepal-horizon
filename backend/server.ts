@@ -44,7 +44,7 @@ app.use(express.json());
 
 app.use("/api/v1/admin",adminAuth ,adminRouter);
 app.use("/api/v1/user",userRouter);
-app.use("/api/v1/images", adminAuth, imageRouter);
+app.use("/api/v1/images",adminAuth ,imageRouter);
 app.use("/api/v1/bookingAnalytics" ,adminAuth, bookingAnalyticsRoute)
 
 

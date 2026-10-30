@@ -4,8 +4,8 @@ import { requireAuth } from "../middleware/auth.middleware.ts";
 
 const bookingAnalyticsRoute = Router()
 
-bookingAnalyticsRoute.get('/days' , requireAuth ,days)
-bookingAnalyticsRoute.get('/weeks' ,requireAuth ,weeks )
-bookingAnalyticsRoute.get('/months' , requireAuth,months )
+bookingAnalyticsRoute.get('/days',days)
+bookingAnalyticsRoute.get('/weeks',weeks )
+bookingAnalyticsRoute.get('/months',months )
 
 export default bookingAnalyticsRoute
