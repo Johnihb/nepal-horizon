@@ -1,4 +1,5 @@
 import z from "zod";
+import { BookingStatus } from "../generated/prisma/enums.ts";
 
 export const packageSchema = z.object({
   name: z.string().min(2).max(100),
@@ -26,4 +27,14 @@ export const validatePackageId = z.object({
 export const validatePackageRequest = z.object({
   people: z.number().min(1),
   date: z.iso.date(),
+});
+
+export const validateBookingStatus = z.object({
+  id: z.string().uuid(),
+  status: z.enum(BookingStatus),
+});
+
+/** `?status=PENDING|CONFIRMED|CANCELLED` — omitted means every booking. */
+export const filterBookingsSchema = z.object({
+  status: z.enum(BookingStatus).optional(),
 });
