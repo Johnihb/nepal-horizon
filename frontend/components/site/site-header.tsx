@@ -24,6 +24,7 @@ const LINKS: NavLink[] = [
   // five links and a clipped control is worse than a missing one.
   { href: "/dashboard", label: "Field Office", signedInOnly: true, narrow: true },
   { href: "/admin", label: "Console", signedInOnly: true, adminOnly: true, narrow: true },
+  { href: "/admin/bookings", label: "Booking Queue", signedInOnly: true, adminOnly: true, narrow: true },
 ];
 
 export default function SiteHeader() {

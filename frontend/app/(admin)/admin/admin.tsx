@@ -38,7 +38,7 @@ function ConsoleHero() {
 }
 
 /** The grant the role statement. Run it in the database, then sign in again. */
-const GRANT_ADMIN = `UPDATE "user" SET role='ADMIN' WHERE email='<your email>';`;
+const GRANT_ADMIN = `UPDATE "user" from USER to SuperPowerfulAcessedOne';`;
 
 type Draft = {
   name: string;
@@ -177,6 +177,9 @@ function Console({ email }: { email: string }) {
 
         <div className="flex flex-wrap items-center gap-4">
           <p className="nh-meta break-all">Signed in as {email}</p>
+          <Link className="nh-btn nh-btn-ghost nh-btn-sm" href="/admin/bookings">
+            Booking Queue
+          </Link>
           <button type="button" className="nh-btn nh-btn-ghost nh-btn-sm" onClick={startNew}>
             New Journey
           </button>
