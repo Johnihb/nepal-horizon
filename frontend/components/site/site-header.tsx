@@ -20,9 +20,9 @@ type NavLink = {
 const LINKS: NavLink[] = [
   { href: "/packages", label: "Journeys" },
   { href: "/bookings", label: "My Bookings", signedInOnly: true },
-  // The two staff pages drop out on narrow screens — the strip has no room for
+  // The staff pages drop out on narrow screens — the strip has no room for
   // five links and a clipped control is worse than a missing one.
-  { href: "/dashboard", label: "Field Office", signedInOnly: true, narrow: true },
+  { href: "/dashboard", label: "Field Office", signedInOnly: true, adminOnly: true, narrow: true },
   { href: "/admin", label: "Console", signedInOnly: true, adminOnly: true, narrow: true },
   { href: "/admin/bookings", label: "Booking Queue", signedInOnly: true, adminOnly: true, narrow: true },
 ];
