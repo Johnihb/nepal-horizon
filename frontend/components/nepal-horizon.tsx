@@ -7,7 +7,6 @@ import { useRef } from "react"
 import { useGSAP } from "@gsap/react"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { ScrollToPlugin } from "gsap/ScrollToPlugin"
 
 import { useSession } from "@/hooks/session"
 import { authClient } from "@/lib/auth-client"
@@ -17,7 +16,7 @@ const NepalHorizonScene = dynamic(() => import("@/components/nepal-horizon-scene
   loading: () => <div className="nh-scene-loading" aria-hidden="true" />,
 })
 
-gsap.registerPlugin(ScrollTrigger, ScrollToPlugin)
+gsap.registerPlugin(ScrollTrigger)
 
 const routes = [
   { name: "Manaslu Circuit", place: "Gorkha, Nepal", days: "14 days", season: "Oct–Nov" },
@@ -41,6 +40,14 @@ export default function NepalHorizon() {
 
       const root = scope.current
       if (!root) return
+
+      // Toggle a class rather than React state: this fires on every scroll tick
+      // and must never re-render the route.
+      ScrollTrigger.create({
+        start: "top+=88 top",
+        end: "max",
+        onToggle: (self) => root.classList.toggle("is-scrolled", self.isActive),
+      })
 
       const reveals = gsap.utils.toArray<HTMLElement>(".nh-reveal")
       gsap.set(reveals, { autoAlpha: 0, y: 24 })
@@ -72,35 +79,15 @@ export default function NepalHorizon() {
         const scene = root.querySelector(".nh-scene")
         const veil = root.querySelector(".nh-hero-veil")
         const footer = root.querySelector(".nh-hero-footer")
+        const copy = root.querySelector(".nh-hero-copy")
 
         const st = { trigger: hero, start: "top top", end: "bottom top", scrub: 0.6 }
         if (scene) gsap.to(scene, { yPercent: 16, scale: 1.08, ease: "none", scrollTrigger: st })
-        if (veil) gsap.to(veil, { autoAlpha: 0.35, ease: "none", scrollTrigger: st })
+        if (veil) gsap.to(veil, { autoAlpha: 0.6, ease: "none", scrollTrigger: st })
         if (footer) gsap.to(footer, { autoAlpha: 0, y: -24, ease: "none", scrollTrigger: { ...st, end: "55% top" } })
-      }
-
-      // Nav routing — tween the scroll instead of the browser's default smooth scroll.
-      const nav = root.querySelector(".nh-nav")
-      if (nav && !nav.hasAttribute("data-routing")) {
-        nav.setAttribute("data-routing", "true")
-        nav.addEventListener("click", (event) => {
-          const link = (event.target as HTMLElement).closest("a")
-          const id = link?.getAttribute("href")
-          if (!link || !id?.startsWith("#")) return
-          const target = document.querySelector<HTMLElement>(id)
-          if (!target) return
-          event.preventDefault()
-
-          const doc = document.documentElement
-          const prev = doc.style.scrollBehavior
-          doc.style.scrollBehavior = "auto"
-          gsap.to(window, {
-            duration: 1.4,
-            ease: "power3.inOut",
-            scrollTo: { y: target, offsetY: 0 },
-            onComplete: () => { doc.style.scrollBehavior = prev },
-          })
-        })
+        // The copy sits on the bright part of the mesh once the veil thins, so it
+        // leaves with the veil instead of staying behind at 1.6:1 contrast.
+        if (copy) gsap.to(copy, { autoAlpha: 0, y: -32, ease: "none", scrollTrigger: { ...st, end: "62% top" } })
       }
     },
     { scope }
@@ -252,13 +239,13 @@ export default function NepalHorizon() {
         </div>
         <div className="nh-route-list">
           {routes.map((route, index) => (
-            <a className="nh-route-card nh-reveal" href="#inquire" key={route.name}>
+            <Link className="nh-route-card nh-reveal" href="/packages" key={route.name}>
               <span className="nh-route-number">0{index + 1}</span>
               <span className="nh-route-name">{route.name}</span>
               <span className="nh-route-place">{route.place}</span>
               <span className="nh-route-meta">{route.days}<br />{route.season}</span>
               <span className="nh-route-arrow" aria-hidden="true">↗</span>
-            </a>
+            </Link>
           ))}
         </div>
       </section>
@@ -293,14 +280,14 @@ export default function NepalHorizon() {
         <p className="nh-section-index nh-reveal">Start Here <span>04</span></p>
         <div className="nh-inquire-content nh-reveal">
           <h2 id="inquire-title">The Route Begins<br />With A <em>Question.</em></h2>
-          <a className="nh-button nh-button-light" href="mailto:hello@nepalhorizon.travel?subject=Plan%20a%20journey">Tell Us Where You’re Drawn <span aria-hidden="true">↗</span></a>
+          <a className="nh-button nh-button-light" href="mailto:keshwor12@gmail.com?subject=Plan%20a%20journey">Tell Us Where You’re Drawn <span aria-hidden="true">↗</span></a>
         </div>
       </section>
 
       <footer className="nh-footer">
         <a className="nh-mark" href="#top" aria-label="Back to top"><span aria-hidden="true">NH</span><span>NEPAL HORIZON</span></a>
         <p>Mountain journeys, Nepal</p>
-        <a href="mailto:hello@nepalhorizon.travel">hello@nepalhorizon.travel</a>
+        <a href="mailto:keshwor12@gmail.com">keshwor12@gmail.com</a>
       </footer>
     </main>
   )

@@ -89,11 +89,17 @@ export default function PackageDetail({ id }: { id: string }) {
             className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.88)_0%,rgba(0,0,0,0.42)_46%,rgba(0,0,0,0.12)_100%)]"
             aria-hidden="true"
           />
+          {/* Vertical scrim: the heading sits in the lower third, where the
+              sideways gradient is at its thinnest. */}
+          <div
+            className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.35)_0%,transparent_38%,rgba(0,0,0,0.72)_100%)]"
+            aria-hidden="true"
+          />
           <div className="absolute inset-x-0 bottom-0 px-[clamp(1.25rem,9vw,10.5rem)] pb-[clamp(1.75rem,4vw,3.25rem)]">
             <p className="nh-eyebrow text-white/70">
               <span className="text-white">{journey.location}</span>
               <span aria-hidden="true">✦</span>
-              <span>Nepal</span>
+              <span>{price} per person</span>
             </p>
             <h1 className="nh-display-1 mt-6 max-w-3xl text-white">{journey.name}</h1>
           </div>

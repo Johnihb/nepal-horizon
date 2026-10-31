@@ -254,7 +254,7 @@ export default function NepalHorizonScene() {
       pins.forEach((pin, index) => {
         const label = labels[index]
         if (!label) return
-        label.style.opacity = reducedMotion || navigationProgress.value >= index / (pins.length - 1) ? "1" : "0"
+        label.style.opacity = reducedMotion || navigationProgress.value >= (index + 0.8) / pins.length ? "1" : "0"
         pin.getWorldPosition(labelAnchor)
         labelAnchor.project(camera)
         const x = (labelAnchor.x * 0.5 + 0.5) * canvas.clientWidth

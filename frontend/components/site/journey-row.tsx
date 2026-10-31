@@ -23,7 +23,7 @@ export default function JourneyRow({ journey }: { journey: TravelPackage }) {
       <div className="min-w-0">
         <h2 className="nh-row-name">{journey.name}</h2>
         <p className="nh-row-sub nh-meta">
-          {journey.location} · From {price}
+          {journey.location} · <span className="whitespace-nowrap">From {price}</span>
         </p>
       </div>
 

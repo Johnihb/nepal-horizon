@@ -17,21 +17,21 @@ import { DEFAULT_RANGE } from "./types";
  * Everything else is ink, paper and hairline rules.
  *
  * These are the ink shell's own tokens, so the chart cannot drift away from
- * the page it is drawn on: `--nh-accent` (#6FC6CE), `--nh-accent-2`
- * (#E7A25A) and `--nh-mist` (#BDBDBD). Measured against the near-black ground
- * they land at 12.0:1, 10.4:1 and 11.0:1 — every one of them clears the 3:1
+ * the page it is drawn on: `--nh-accent` (#9FD3CE), `--nh-accent-2`
+ * (#E0A662) and `--nh-mist` (#C7C5BF). Measured against the near-black ground
+ * they land at 11.9:1, 9.2:1 and 11.4:1 — every one of them clears the 3:1
  * a data line needs, where the paper-shell accents would not. The rules sit
  * at 24% and 16% white so the grid reads as a rule rather than a glow, and
- * the labels sit at #BDBDBD.
+ * the labels sit at #C7C5BF.
  */
 export const DEFAULT_CONFIG = {
-  primaryColor: "#6FC6CE", // --nh-accent on ink — bookings
-  secondaryColor: "#E7A25A", // --nh-accent-2 on ink — revenue
-  tertiaryColor: "#BDBDBD", // --nh-mist on ink — travellers
-  textColor: "#BDBDBD", // axis + legend labels
+  primaryColor: "#9FD3CE", // --nh-accent on ink — bookings
+  secondaryColor: "#E0A662", // --nh-accent-2 on ink — revenue
+  tertiaryColor: "#C7C5BF", // --nh-mist on ink — travellers
+  textColor: "#C7C5BF", // axis + legend labels
   gridColor: "rgba(255,255,255,0.16)", // hairline rule
   axisColor: "rgba(255,255,255,0.24)", // --nh-page-line on ink
-  surfaceColor: "#111111", // --nh-charcoal, the raised dark surface
+  surfaceColor: "#16161A", // --nh-charcoal, the raised dark surface
   height: 420,
   width: "100%",
 } as const;

@@ -14,29 +14,36 @@ second visual language.
 
 | Token | Value | Meaning |
 |---|---|---|
-| `--nh-ink` | `#000` | ground, primary buttons, nav bar |
-| `--nh-charcoal` | `#111` | raised dark surface |
-| `--nh-graphite` | `#333` | body copy on paper |
-| `--nh-mist` | `#bdbdbd` | secondary copy on ink |
-| `--nh-paper` | `#fff` | text on ink, page ground |
+| `--nh-ink` | `#0b0b0c` | ground, primary buttons, nav bar |
+| `--nh-charcoal` | `#16161a` | raised dark surface |
+| `--nh-graphite` | `#3a3a38` | body copy on paper |
+| `--nh-mist` | `#c7c5bf` | secondary copy on ink |
+| `--nh-paper` | `#f7f5f0` | text on ink, page ground |
 | `--nh-line` | `rgba(255,255,255,.26)` | hairline on ink |
+
+Nothing is pure `#000` or `#fff`: the pair is warmed so a section boundary reads
+as two sheets of the same stock, not two different sites.
 
 Inside a page shell the tokens re-map so a component never has to know which
 half of the range it sits on:
 
 | Token | `.nh-page` (paper) | `.nh-page--ink` |
 |---|---|---|
-| `--nh-page-bg` | `#fff` | `#000` |
-| `--nh-page-fg` | `#333` | `#fff` |
-| `--nh-page-line` | `rgba(0,0,0,.16)` | `rgba(255,255,255,.24)` |
-| `--nh-page-muted` | `#6a6a6a` | `#bdbdbd` |
-| `--nh-accent` | `#1a6b72` | `#6fc6ce` |
-| `--nh-accent-2` | `#9c5311` | `#e7a25a` |
+| `--nh-page-bg` | `#f7f5f0` | `#0b0b0c` |
+| `--nh-page-fg` | `#3a3a38` | `#f7f5f0` |
+| `--nh-page-line` | `rgba(28,25,20,.14)` | `rgba(255,255,255,.24)` |
+| `--nh-page-muted` | `#6a6a6a` | `#c7c5bf` |
+| `--nh-accent` | `#1c6360` | `#9fd3ce` |
+| `--nh-accent-2` | `#a8641f` | `#e0a662` |
 | `--nh-danger` | `#b3261e` | `#ff8a80` |
+| `--nh-focus` | `#1c6360` | `#9fd3ce` |
 
 **Colour rule.** The page is monochrome. Teal and ochre appear only where they
-encode data — booking status, chart series, an accent word. Never as
-decoration, never as a button fill.
+encode data — booking status, chart series, an accent word — plus the focus
+ring, which is functional, not decorative. Never as a button fill.
+
+**Focus rule.** The ring is `--nh-focus`, never `currentColor`: a white ring on
+a paper page is invisible, which is exactly what `.nh-btn-ink` used to do.
 
 **Landing atmosphere (home only).** The landing route may carry low-saturation
 ambient colour as atmosphere, never as chrome: `--nh-dawn` (#c99a3a),
@@ -46,16 +53,17 @@ line. Still no neon or saturated fills.
 
 **Data on the ink shell.** Anything that draws data on `.nh-page--ink` — the
 booking chart, the stat rules — uses that shell's own tokens: `--nh-accent`
-(`#6fc6ce`) for bookings, `--nh-accent-2` (`#e7a25a`) for revenue,
-`--nh-mist` (`#bdbdbd`) for the third series. The paper-shell accents
-(`#1a6b72`, `#9c5311`) fail the 3:1 a data line needs against black, so they
+(`#9fd3ce`) for bookings, `--nh-accent-2` (`#e0a662`) for revenue,
+`--nh-mist` (`#c7c5bf`) for the third series. The paper-shell accents
+(`#1c6360`, `#a8641f`) fail the 3:1 a data line needs against black, so they
 never cross over.
 
 ## 2. Type
 
 - **Display** — Work Sans (`var(--font-display)`), weight 500, tracking
-  `-0.07em`, line-height `0.9`. Scales: `.nh-display-1` (page title),
-  `.nh-display-2` (section), `.nh-display-3` (card / price).
+  `-0.05em`, line-height `0.92`. Scales: `.nh-display-1` (page title),
+  `.nh-display-2` (section), `.nh-display-3` (card / price). Nothing smaller
+  than `0.7rem` (11.2px) anywhere — the nav and small buttons used to be 9.6px.
 - **Emphasis** — one word per headline set in Georgia italic via `<em>`.
   This is the signature of the whole site; a headline without it feels off.
 - **Metadata** — Geist Mono (`var(--font-mono)`), uppercase, tracking `.09em`,
@@ -99,17 +107,23 @@ which are pills.
 
 ## 5. Rules
 
-1. Every interactive element has a visible `:focus-visible` outline (2px,
-   `currentColor`, 3px offset). Never remove it.
-2. Every icon-only control has `aria-label`. Every image has `alt`.
-3. Forms: `<label htmlFor>` on every control, `name` set, correct `type`,
+1. Every interactive element has a visible `:focus-visible` outline (2px
+   `--nh-focus`, 3px offset). Never remove it, never use `currentColor`.
+2. Every control has four states — rest, hover, `:active` (presses down 1px),
+   and `:disabled`/`[aria-busy="true"]`. Hover never lifts more than 1px.
+3. Motion is chosen from the table, never invented:
+   `--dur-1` 120ms (press), `--dur-2` 200ms (hover/colour), `--dur-3` 320ms
+   (layout/panel), `--dur-4` 640ms (reveal) with `--ease-out` or
+   `--ease-in-out`.
+4. Every icon-only control has `aria-label`. Every image has `alt`.
+5. Forms: `<label htmlFor>` on every control, `name` set, correct `type`,
    `autocomplete` where it applies, errors inline under the field.
-4. Destructive actions are confirmed before they fire.
-5. Loading, empty and error states are all designed — never a blank screen.
-6. `prefers-reduced-motion` is honoured; the app pages use no scroll animation
+6. Destructive actions are confirmed before they fire.
+7. Loading, empty and error states are all designed — never a blank screen.
+8. `prefers-reduced-motion` is honoured; the app pages use no scroll animation
    at all, so there is nothing to disable.
-7. Dates and money go through `Intl.DateTimeFormat` / `Intl.NumberFormat`.
-8. Copy is plain and second-person: "Book this journey", not "Submit".
+9. Dates and money go through `Intl.DateTimeFormat` / `Intl.NumberFormat`.
+10. Copy is plain and second-person: "Book this journey", not "Submit".
 
 ## 6. Data layer
 
