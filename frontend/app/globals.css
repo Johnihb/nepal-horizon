@@ -149,6 +149,8 @@ html {
 
 /* Nepal Horizon landing route */
 html:has(.nh-route) {
+  /* The header is a fixed bar, so anchor targets must not land underneath it. */
+  scroll-padding-top: 4.5rem;
   color-scheme: dark;
 }
 
@@ -192,7 +194,7 @@ html:has(.nh-route) {
   text-transform: uppercase;
   top: -4rem;
   transition: top 160ms ease;
-  z-index: 30;
+  z-index: 60;
 }
 
 .nh-skip-link:focus-visible {
@@ -344,43 +346,36 @@ html:has(.nh-route) {
   z-index: 1;
 }
 
-.nh-header,
 .nh-hero-copy,
 .nh-hero-footer {
   position: absolute;
   z-index: 2;
 }
 
+/* A fixed sheet of glass, not a transparent overlay: the hero scene and the
+   later sections scroll under it and must never win the paint order. It is a
+   child of .nh-route, not of the isolated .nh-hero-stage, for that reason. */
 .nh-header {
   align-items: center;
+  backdrop-filter: blur(16px) saturate(120%);
+  background: color-mix(in srgb, var(--nh-ink) 62%, transparent);
+  border-bottom: 1px solid transparent;
   display: flex;
   justify-content: space-between;
-  left: clamp(1.25rem, 4vw, 4.5rem);
-  right: clamp(1.25rem, 4vw, 4.5rem);
-  top: max(env(safe-area-inset-top), clamp(1.25rem, 3vw, 2.25rem));
-}
-
-/* The landing has no nav once the hero scrolls past. Pin the header so it
-   behaves like the ink bar on every other page, and swap it to a solid
-   surface the moment it leaves the hero. */
-.nh-header {
-  padding-block: 0;
+  left: 0;
+  padding: 0.85rem clamp(1.25rem, 4vw, 4.5rem);
   position: fixed;
+  right: 0;
+  top: 0;
   transition:
     background-color var(--dur-3) var(--ease-out),
-    padding var(--dur-3) var(--ease-out),
     border-color var(--dur-3) var(--ease-out);
   z-index: 30;
 }
 
 .nh-route.is-scrolled .nh-header {
   background: color-mix(in srgb, var(--nh-ink) 88%, transparent);
-  border-bottom: 1px solid var(--nh-line);
-  left: 0;
-  padding: 0.9rem clamp(1.25rem, 4vw, 4.5rem);
-  right: 0;
-  top: 0;
-  backdrop-filter: blur(14px);
+  border-bottom-color: var(--nh-line);
 }
 
 .nh-mark {
@@ -514,6 +509,7 @@ html:has(.nh-route) {
 
 .nh-hero h1,
 .nh-manifesto h2,
+.nh-process h2,
 .nh-journeys h2,
 .nh-inquire h2,
 .nh-detail-card h3 {
@@ -724,6 +720,13 @@ html:has(.nh-route) {
 .nh-journeys h2,
 .nh-inquire h2 {
   font-size: clamp(3.1rem, 7.4vw, 8rem);
+}
+
+/* The process heading shares a two-column band, so it sits a step below the
+   full-width statements — but it was never given a size at all and fell back
+   to the preflight 16px. */
+.nh-process h2 {
+  font-size: clamp(2rem, 3.8vw, 3.15rem);
 }
 
 .nh-manifesto-copy {

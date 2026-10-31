@@ -97,6 +97,44 @@ export default function NepalHorizon() {
     <main ref={scope} className="nh-route">
       <a className="nh-skip-link" href="#journeys">Skip to journeys</a>
 
+      {/* Outside .nh-hero-stage on purpose: that stage is `isolation: isolate`,
+          which traps the header's z-index and let the later sections paint
+          over it. As a child of .nh-route it sits above everything. */}
+      <header className="nh-header">
+        <Link className="nh-mark" href="/" aria-label="Nepal Horizon home">
+          <span aria-hidden="true">NH</span>
+          <span>NEPAL HORIZON</span>
+        </Link>
+        <nav className="nh-nav" aria-label="Primary navigation">
+          {/* The real journeys ledger, not the sample cards further down the
+              page — this is the link visitors were missing. */}
+          <Link className="nh-nav-ledger" href="/packages">Journeys</Link>
+          <a className="nh-nav-section" href="#process">How We Work</a>
+          <a className="nh-nav-section" href="#approach">Approach</a>
+          <a className="nh-nav-section" href="#inquire">Inquire</a>
+
+          {/* No "pending" gap: the sign-in route is always rendered so a
+              first-time visitor can never land on a nav with no account
+              option. It swaps to the account controls once the session
+              resolves. */}
+          {user ? (
+            <>
+              <Link className="nh-nav-account" href="/bookings">My Bookings</Link>
+              {isAdmin ? (
+                <Link className="nh-nav-account nh-nav-narrow" href="/admin">Console</Link>
+              ) : null}
+              <button className="nh-nav-auth" type="button" onClick={handleSignOut}>
+                Sign Out
+              </button>
+            </>
+          ) : (
+            <Link className="nh-nav-auth" href="/login">
+              Sign In <span aria-hidden="true">↗</span>
+            </Link>
+          )}
+        </nav>
+      </header>
+
       <section className="nh-hero" id="top" aria-labelledby="nh-title">
         <div className="nh-hero-stage">
           <div className="nh-hero-atmosphere" aria-hidden="true">
@@ -114,41 +152,6 @@ export default function NepalHorizon() {
           </div>
           <NepalHorizonScene />
           <div className="nh-hero-veil" aria-hidden="true" />
-
-          <header className="nh-header">
-            <Link className="nh-mark" href="/" aria-label="Nepal Horizon home">
-              <span aria-hidden="true">NH</span>
-              <span>NEPAL HORIZON</span>
-            </Link>
-            <nav className="nh-nav" aria-label="Primary navigation">
-              {/* The real journeys ledger, not the sample cards further down the
-                  page — this is the link visitors were missing. */}
-              <Link className="nh-nav-ledger" href="/packages">Journeys</Link>
-              <a className="nh-nav-section" href="#process">How We Work</a>
-              <a className="nh-nav-section" href="#approach">Approach</a>
-              <a className="nh-nav-section" href="#inquire">Inquire</a>
-
-              {/* No "pending" gap: the sign-in route is always rendered so a
-                  first-time visitor can never land on a nav with no account
-                  option. It swaps to the account controls once the session
-                  resolves. */}
-              {user ? (
-                <>
-                  <Link className="nh-nav-account" href="/bookings">My Bookings</Link>
-                  {isAdmin ? (
-                    <Link className="nh-nav-account nh-nav-narrow" href="/admin">Console</Link>
-                  ) : null}
-                  <button className="nh-nav-auth" type="button" onClick={handleSignOut}>
-                    Sign Out
-                  </button>
-                </>
-              ) : (
-                <Link className="nh-nav-auth" href="/login">
-                  Sign In <span aria-hidden="true">↗</span>
-                </Link>
-              )}
-            </nav>
-          </header>
 
           <div className="nh-hero-copy">
             <p className="nh-kicker"><span aria-hidden="true">✦</span> Himalayan Field Office</p>
