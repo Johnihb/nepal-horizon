@@ -1,7 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect } from "react";
 
+import SiteShell from "@/components/site/site-shell";
 import { ErrorNote } from "@/components/site/states";
 
 export default function GlobalError({
@@ -16,8 +18,8 @@ export default function GlobalError({
   }, [error]);
 
   return (
-    <div className="nh-page">
-      <main id="main" className="nh-page-main">
+    <SiteShell>
+      <div className="nh-page-main">
         <div className="mx-auto max-w-2xl">
           <p className="nh-eyebrow nh-eyebrow-row">
             <span>Field Office</span>
@@ -36,14 +38,19 @@ export default function GlobalError({
               title="The request did not get through"
               message={error.message || "An unexpected error stopped this page."}
               action={
-                <button type="button" className="nh-btn nh-btn-ghost nh-btn-sm" onClick={reset}>
-                  Try Again
-                </button>
+                <div className="flex flex-wrap gap-3">
+                  <button type="button" className="nh-btn nh-btn-ghost nh-btn-sm" onClick={reset}>
+                    Try Again
+                  </button>
+                  <Link className="nh-btn nh-btn-ghost nh-btn-sm" href="/packages">
+                    Journeys
+                  </Link>
+                </div>
               }
             />
           </div>
         </div>
-      </main>
-    </div>
+      </div>
+    </SiteShell>
   );
 }
