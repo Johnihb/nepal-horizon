@@ -298,7 +298,7 @@ export default function LoginPage() {
 
             <p className="nh-muted mt-9 text-[0.9rem] leading-7">
               Trouble signing in? Write to{" "}
-              <a className="nh-link" href="mailto:hello@nepalhorizon.travel">
+              <a className="nh-link" href="mailto:keshwor12@gmail.com">
                 the field office
               </a>{" "}
               and we will walk you through it by hand.

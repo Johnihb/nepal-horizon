@@ -8,7 +8,7 @@ export default function SiteFooter() {
         <span>NEPAL HORIZON</span>
       </Link>
       <p>Mountain journeys, Nepal</p>
-      <a href="mailto:hello@nepalhorizon.travel">hello@nepalhorizon.travel</a>
+      <a href="mailto:keshwor12@gmail.com">keshwor12@gmail.com</a>
     </footer>
   );
 }
