@@ -82,6 +82,18 @@ export type SessionUser = {
 
 export type BookingStatus = "PENDING" | "CONFIRMED" | "CANCELLED";
 
+/** GET /user/bookedPackages — the signed-in traveller's reservations. */
+export type TravelBooking = {
+  id: string;
+  price: number;
+  totalPeople: number;
+  /** ISO datetime — the column is date-only, so it always lands at midnight UTC. */
+  travelDate: string;
+  status: BookingStatus;
+  createdAt: string;
+  package: TravelPackage;
+};
+
 /** GET /admin/bookings — every booking, the pending queue first. */
 export type AdminBooking = {
   id: string;

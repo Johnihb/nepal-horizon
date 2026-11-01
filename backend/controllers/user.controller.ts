@@ -153,24 +153,23 @@ export const getPackageDetail = async (req: Request, res: Response) => {
 };
 
 
+//* the traveller's own reservations, each with its journey, media and status
 export const getBookedPackages = async(req:Request, res:Response) =>{
   try {
     const userId = req.session?.user.id as string;
-    const packages = await prisma.package.findMany({
-      where: {
-        bookings: {
-          some: {
-            userId: userId
-          }
-        },      
+    const bookings = await prisma.booking.findMany({
+      where: { userId },
+      include: {
+        package: { include: { media: true } },
       },
+      orderBy: { createdAt: "desc" },
     });
 
-    if (!packages || packages.length === 0) {
+    if (bookings.length === 0) {
       return res.status(404).json(apiResponse(404, { message: "Oops! No packages found" }));
     }
 
-    return res.status(200).json(apiResponse(200, packages));
+    return res.status(200).json(apiResponse(200, bookings));
   } catch (error) {
    return res.status(500).json(apiResponse(500, { message: "Internal server error" })); 
   }

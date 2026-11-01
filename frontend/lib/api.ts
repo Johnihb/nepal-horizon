@@ -10,6 +10,7 @@ import type {
   PackagePayload,
   PackagesPage,
   TravelPackage,
+  TravelBooking,
   UploadSignature,
   UploadedImage,
 } from "@/types/package";
@@ -89,10 +90,10 @@ export async function fetchPackage(packageId: string): Promise<TravelPackage> {
   return data.body;
 }
 
-/** GET /user/bookedPackages — packages the signed-in traveller has booked. */
-export async function fetchBookedPackages(): Promise<TravelPackage[]> {
+/** GET /user/bookedPackages — reservations the signed-in traveller has made. */
+export async function fetchBookedPackages(): Promise<TravelBooking[]> {
   try {
-    const { data } = await axios.get<{ body?: TravelPackage[] }>("/user/bookedPackages");
+    const { data } = await axios.get<{ body?: TravelBooking[] }>("/user/bookedPackages");
     return data.body ?? [];
   } catch (error) {
     // The API answers 404 when the traveller has no bookings yet.
