@@ -1324,6 +1324,7 @@ html:has(.nh-route) {
     --nh-page-invert-fg: var(--nh-paper);
     --nh-accent: #1c6360;
     --nh-accent-2: #a8641f;
+    --nh-ok: #256d3b;
     --nh-danger: #b3261e;
     --nh-focus: #1c6360;
     background: var(--nh-page-bg);
@@ -1345,6 +1346,7 @@ html:has(.nh-route) {
     --nh-page-invert-fg: var(--nh-ink);
     --nh-accent: #9fd3ce;
     --nh-accent-2: #e0a662;
+    --nh-ok: #8bd695;
     --nh-danger: #ff8a80;
     --nh-focus: #9fd3ce;
     color-scheme: dark;
@@ -1812,14 +1814,27 @@ html:has(.nh-route) {
     text-transform: uppercase;
   }
 
-  .nh-badge-pending {
-    border-color: var(--nh-accent-2);
-    color: var(--nh-accent-2);
+  /* Filled with the status colour itself, so one class carries the tint. */
+  .nh-badge-pending,
+  .nh-badge-confirmed,
+  .nh-badge-cancelled {
+    background: color-mix(in srgb, currentColor 14%, transparent);
+    border-color: currentColor;
   }
 
+  /* Grey: still waiting on the field office. */
+  .nh-badge-pending {
+    color: var(--nh-page-muted);
+  }
+
+  /* Green: the departure is held. */
   .nh-badge-confirmed {
-    border-color: var(--nh-accent);
-    color: var(--nh-accent);
+    color: var(--nh-ok);
+  }
+
+  /* Red: called off. */
+  .nh-badge-cancelled {
+    color: var(--nh-danger);
   }
 
   .nh-badge-neutral {
@@ -1953,6 +1968,43 @@ html:has(.nh-route) {
   .nh-row:hover .nh-row-arrow {
     transform: translate(0.25rem, -0.25rem);
   }
+
+  /* ---- booking rows (open in place) ----------------------------------- */
+
+  .nh-booking {
+    border-bottom: 1px solid var(--nh-page-line);
+  }
+
+  .nh-booking-row {
+    align-items: center;
+    cursor: pointer;
+    display: grid;
+    gap: clamp(0.9rem, 2vw, 1.4rem);
+    grid-template-columns: 5rem minmax(0, 1.7fr) minmax(7rem, 0.7fr) 8.5rem 1.25rem;
+    list-style: none;
+    min-height: 8rem;
+    padding-block: 1.1rem;
+    transition: background-color 220ms ease;
+  }
+
+  .nh-booking-row::-webkit-details-marker {
+    display: none;
+  }
+
+  .nh-booking-row:hover {
+    background: color-mix(in srgb, currentColor 4%, transparent);
+  }
+
+  .nh-booking[open] .nh-row-arrow {
+    transform: rotate(180deg);
+  }
+
+  .nh-booking-body {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+    padding: 0.5rem 0 1.75rem 6.4rem;
+  }
 }
 
 @media (max-width: 900px) {
@@ -1969,6 +2021,15 @@ html:has(.nh-route) {
   .nh-row-sub {
     display: block;
     margin-top: 0.5rem;
+  }
+
+  .nh-booking-row {
+    grid-template-columns: 4.25rem minmax(0, 1fr) 1.25rem;
+    min-height: 6.5rem;
+  }
+
+  .nh-booking-body {
+    padding-left: 0;
   }
 }
 

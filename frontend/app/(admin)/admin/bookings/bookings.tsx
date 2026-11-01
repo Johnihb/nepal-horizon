@@ -17,7 +17,7 @@ import type { AdminBooking, BookingStatus } from "@/types/package";
 const BADGE: Record<BookingStatus, string> = {
   PENDING: "nh-badge nh-badge-pending",
   CONFIRMED: "nh-badge nh-badge-confirmed",
-  CANCELLED: "nh-badge nh-badge-neutral",
+  CANCELLED: "nh-badge nh-badge-cancelled",
 };
 
 /** `null` is the unfiltered view. */

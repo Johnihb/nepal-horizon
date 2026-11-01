@@ -35,12 +35,17 @@ half of the range it sits on:
 | `--nh-page-muted` | `#6a6a6a` | `#c7c5bf` |
 | `--nh-accent` | `#1c6360` | `#9fd3ce` |
 | `--nh-accent-2` | `#a8641f` | `#e0a662` |
+| `--nh-ok` | `#256d3b` | `#8bd695` |
 | `--nh-danger` | `#b3261e` | `#ff8a80` |
 | `--nh-focus` | `#1c6360` | `#9fd3ce` |
 
 **Colour rule.** The page is monochrome. Teal and ochre appear only where they
-encode data — booking status, chart series, an accent word — plus the focus
-ring, which is functional, not decorative. Never as a button fill.
+encode data — chart series, an accent word — plus the focus ring, which is
+functional, not decorative. Never as a button fill. Booking status is the one
+place the palette leaves the teal/ochre pair: `.nh-badge-confirmed` is
+`--nh-ok` (green), `.nh-badge-pending` is `--nh-page-muted` (grey),
+`.nh-badge-cancelled` is `--nh-danger` (red), so the colour lands before the
+word does.
 
 **Focus rule.** The ring is `--nh-focus`, never `currentColor`: a white ring on
 a paper page is invisible, which is exactly what `.nh-btn-ink` used to do.
