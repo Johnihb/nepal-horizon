@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
@@ -19,6 +19,7 @@ import { EmptyState, ErrorNote, LoadingBlock } from "@/components/site/states";
 import { useBookingAnalytics } from "@/hooks/get";
 import { toApiError } from "@/lib/api";
 import { cn } from "@/lib/utils";
+import { useSession } from "@/hooks/session";
 
 /** The windows the console can read. The value is the URL contract. */
 const RANGE_OPTIONS: Array<{ id: AnalyticsRange; label: string }> = [
@@ -33,6 +34,30 @@ function readRange(value: string | null): AnalyticsRange {
 }
 
 export default function Page() {
+
+  const router = useRouter();
+
+   const {isAdmin, isPending } = useSession();
+
+  useEffect(() => {
+    if (!isPending && !isAdmin) {
+      router.replace("/login");
+    }
+  }, [isPending, isAdmin, router]);
+
+  if (isPending || !isAdmin) {
+    return (
+      <SiteShell tone="ink">
+        <LoadingBlock
+          rows={1}
+          label="Checking your session…"
+        />
+      </SiteShell>
+    );
+  }
+  
+
+
   return (
     <SiteShell tone="ink">
       <PageHero

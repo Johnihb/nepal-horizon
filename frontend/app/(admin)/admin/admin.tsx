@@ -37,9 +37,6 @@ function ConsoleHero() {
   );
 }
 
-/** The grant the role statement. Run it in the database, then sign in again. */
-const GRANT_ADMIN = `UPDATE "user" from USER to SuperPowerfulAcessedOne';`;
-
 type Draft = {
   name: string;
   location: string;
@@ -55,49 +52,13 @@ type PendingImage = UploadedImage & {
 const EMPTY_DRAFT: Draft = { name: "", location: "", description: "", price: "" };
 
 /**
- * The console. The gate lives above it: no session sends the traveller to the
- * sign-in page, and a session without the ADMIN role is told how to get it.
+ * The console. (admin)/layout.tsx already resolved the session, so there is no
+ * pending state to render here — only the type guard for the signed-in email.
  */
 export default function AdminConsole() {
-  const { user, isAdmin, isPending } = useSession();
-
-  if (isPending) {
-    return (
-      <>
-        <ConsoleHero />
-        <div className="nh-page-main">
-          <LoadingBlock rows={2} label="Checking your session…" />
-        </div>
-      </>
-    );
-  }
+  const { user } = useSession();
 
   if (!user) redirect("/login");
-
-  if (!isAdmin) {
-    return (
-      <>
-        <ConsoleHero />
-        <div className="nh-page-main">
-          <div className="nh-alert nh-alert-info">
-            <p className="font-semibold">The console is for the field office.</p>
-            <p className="mt-1">
-              You are signed in as{" "}
-              <span className="nh-accent break-all">{user.email}</span>, but this account
-              does not carry the ADMIN role, so the console stays closed. The role lives on
-              the user row — grant it in the database:
-            </p>
-            <pre className="nh-panel mt-5 overflow-x-auto font-mono text-xs leading-6 text-[color:var(--nh-page-fg)]">
-              {GRANT_ADMIN}
-            </pre>
-            <p className="mt-4 text-[0.82rem] opacity-75">
-              Sign out and back in afterwards — the role is read with the session.
-            </p>
-          </div>
-        </div>
-      </>
-    );
-  }
 
   return (
     <>

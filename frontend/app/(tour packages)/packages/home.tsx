@@ -63,7 +63,7 @@ function Ledger() {
               ← Retreat
             </Link>
           ) : (
-            <a className="nh-btn nh-btn-ink nh-btn-sm" href="mailto:hello@nepalhorizon.travel">
+            <a className="nh-btn nh-btn-ink nh-btn-sm" href="mailto:keshwor12@gmail.com">
               Tell Us Where You’re Drawn
             </a>
           )
