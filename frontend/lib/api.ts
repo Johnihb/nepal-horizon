@@ -166,8 +166,9 @@ export async function updateBookingStatus(id: string, status: BookingStatus): Pr
 
 /** GET /images/ — the server signs the upload, the browser sends bytes to Cloudinary. */
 export async function fetchUploadSignature(): Promise<UploadSignature> {
-  const { data } = await axios.get<UploadSignature>("/images/");
-  return data;
+  const { data } = await axios.get<{ body?: UploadSignature }>("/images/");
+  if (!data.body) throw new ApiError("We could not get an upload signature.", 500);
+  return data.body;
 }
 
 /**

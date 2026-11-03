@@ -6,17 +6,21 @@ import { apiResponse } from "../helpers/apiResponse.ts";
 
 export const imageSignedUrl = (req: Request, res: Response) => {
   const timestamp = Math.round(Date.now() / 1000);
-  const apiKey = process.env.CLOUDINARY_API_KEY as string;
-  const cloudName = process.env.CLOUDINARY_CLOUD_NAME as string;
+  const apiKey = process.env.CLOUDINARY_API_KEY;
+  const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+  const apiSecret = process.env.CLOUDINARY_API_SECRET;
+  if (!apiKey || !cloudName || !apiSecret) {
+    return res.status(500).json(apiResponse(500, { message: "Cloudinary is not configured" }));
+  }
   const signature = cloudinary.utils.api_sign_request(
     {
       timestamp,
-      asset_folder: "e-tourism",//!must be same key and value when storing in frontend pass formData.append("asset_folder", "e-tourism")
+      asset_folder: "e-tourism",
     },
-    process.env.CLOUDINARY_API_SECRET as string,
+    apiSecret,
   );
 
-  res.json({ timestamp, apiKey, signature, cloudName, folder: "e-tourism" });
+  res.status(200).json(apiResponse(200, { timestamp, apiKey, signature, cloudName, folder: "e-tourism" }));
 };
 
 
@@ -24,17 +28,17 @@ export const deleteImage = async (req: Request, res: Response) => {
   try {
   const { id } = req.params;
   if (!id || typeof id !== 'string' || id.trim().length === 0) {
-    return res.status(400).json({ message: "Invalid image ID" });
+    return res.status(400).json(apiResponse(400, { message: "Invalid image ID" }));
   }
-    const result = await cloudinary.uploader.destroy(id as string, {invalidate: true});
+    const result = await cloudinary.uploader.destroy(id as string, { invalidate: true });
     if (result.result === 'ok') {
-      return res.status(200).json({ message: "Image deleted successfully" });
+      return res.status(200).json(apiResponse(200, { message: "Image deleted successfully" }));
     } else {
-      return res.status(404).json({ message: "Image not found or already deleted" });
+      return res.status(404).json(apiResponse(404, { message: "Image not found or already deleted" }));
     }
   } catch (error) {
     console.error("Error deleting image:", error);
-    return res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json(apiResponse(500, { message: "Internal server error" }));
   }
 };
 
