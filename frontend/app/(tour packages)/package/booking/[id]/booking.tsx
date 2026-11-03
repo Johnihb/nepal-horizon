@@ -249,6 +249,9 @@ export default function Booking({ packageId }: { packageId: string }) {
                   </button>
                   <span className="nh-meta">Total {formatMoney(total)}</span>
                 </div>
+                <p className="nh-muted mt-4 text-[0.8rem] leading-6">
+                  Confirmed by hand. No card charged. Permits arranged by the field office.
+                </p>
               </form>
             ) : (
               <div className="nh-panel">

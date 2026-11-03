@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 
 import JourneyPlate from "@/components/site/journey-plate";
 import { ErrorNote, LoadingBlock } from "@/components/site/states";
@@ -44,8 +45,68 @@ const INCLUDED = [
   },
 ];
 
+/**
+ * A small, deterministic altitude profile for the hero. There is no altitude
+ * column on Package yet, so the line is derived from the journey id — varied
+ * enough to read as a real route, stable across renders.
+ * # ponytail: synthetic profile, replace with real altitude data when added.
+ */
+function altitudePoints(id: string): number[] {
+  let seed = 0;
+  for (let i = 0; i < id.length; i++) seed = (seed * 31 + id.charCodeAt(i)) >>> 0;
+  const points: number[] = [];
+  const steps = 14;
+  for (let i = 0; i <= steps; i++) {
+    const t = i / steps;
+    const base = Math.sin(t * Math.PI) * 0.85 + 0.05;
+    const wobble = (((seed >> (i % 8)) & 7) - 3) * 0.04;
+    points.push(Math.max(0.05, Math.min(0.98, base + wobble)));
+  }
+  return points;
+}
+
+function AltitudeSparkline({ id, label }: { id: string; label: string }) {
+  const points = altitudePoints(id);
+  const width = 220;
+  const height = 48;
+  const pad = 4;
+  const xs = points.map((_, i) => pad + (i / (points.length - 1)) * (width - pad * 2));
+  const ys = points.map((p) => height - pad - p * (height - pad * 2));
+  const d = points
+    .map((_, i) => `${i === 0 ? "M" : "L"}${xs[i].toFixed(1)},${ys[i].toFixed(1)}`)
+    .join(" ");
+  const peakIndex = points.indexOf(Math.max(...points));
+  return (
+    <svg
+      viewBox={`0 0 ${width} ${height}`}
+      className="h-12 w-56 text-white/80"
+      role="img"
+      aria-label={`Altitude profile for ${label}`}
+    >
+      <path d={d} fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx={xs[peakIndex]} cy={ys[peakIndex]} r={2.5} fill="currentColor" />
+    </svg>
+  );
+}
+
 export default function PackageDetail({ id }: { id: string }) {
   const { data: journey, error, isError, isLoading } = useFetchPackageById(id);
+
+  const heroRef = useRef<HTMLElement>(null);
+  const [showSticky, setShowSticky] = useState(false);
+
+  useEffect(() => {
+    const el = heroRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setShowSticky(!entry.isIntersecting);
+      },
+      { threshold: 0 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   if (isError) {
     return (
@@ -76,13 +137,13 @@ export default function PackageDetail({ id }: { id: string }) {
 
   return (
     <>
-      <section className="relative">
+      <section className="relative" ref={heroRef}>
         <div className="relative h-[62svh] min-h-[24rem]">
           <JourneyPlate
             media={journey.media}
             label={journey.location}
             alt={`${journey.name}, ${journey.location}`}
-            className="h-full border-0"
+            className="h-full border-0 nh-ken-burns"
             priority
           />
           <div
@@ -102,6 +163,9 @@ export default function PackageDetail({ id }: { id: string }) {
               <span>{price} per person</span>
             </p>
             <h1 className="nh-display-1 mt-6 max-w-3xl text-white">{journey.name}</h1>
+            <div className="mt-4">
+              <AltitudeSparkline id={journey.id} label={journey.name} />
+            </div>
           </div>
         </div>
       </section>
@@ -185,13 +249,29 @@ export default function PackageDetail({ id }: { id: string }) {
               <Link className="nh-btn nh-btn-ink mt-8 w-full" href={`/package/booking/${journey.id}`}>
                 Book This Journey
               </Link>
-              <Link className="nh-link mt-5 inline-block" href="/packages">
+              <p className="nh-muted mt-5 text-[0.8rem] leading-6">
+                Confirmed by hand. No card charged. Permits arranged by the field office.
+              </p>
+              <Link className="nh-link mt-3 inline-block" href="/packages">
                 ← Back to all journeys
               </Link>
             </div>
           </aside>
         </div>
       </div>
+      {showSticky ? (
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[color:var(--nh-page-line)] bg-[color:var(--nh-page-bg)]/95 px-[clamp(1.25rem,9vw,10.5rem)] py-3 backdrop-blur">
+          <div className="flex items-center justify-between gap-4">
+            <div className="min-w-0">
+              <p className="nh-meta truncate">{journey.name}</p>
+              <p className="nh-display-3">{price} <span className="nh-meta">per person</span></p>
+            </div>
+            <Link className="nh-btn nh-btn-ink nh-btn-sm" href={`/package/booking/${journey.id}`}>
+              Book This Journey
+            </Link>
+          </div>
+        </div>
+      ) : null}
     </>
   );
 }
