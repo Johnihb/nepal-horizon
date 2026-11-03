@@ -61,6 +61,7 @@ export default function ResetPasswordPage() {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (pending) return;
+    if (!token) return;
     if (!validate()) return;
 
     setPending(true);
@@ -68,7 +69,7 @@ export default function ResetPasswordPage() {
     try {
       const { error } = await authClient.resetPassword({
         newPassword: password,
-        token: token!,
+        token,
       });
       if (error) {
         setFormError(error.message || "We could not reset your password. The link may have expired.");
