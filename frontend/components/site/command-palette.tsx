@@ -46,13 +46,13 @@ export function CommandPalette() {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
         event.preventDefault();
         setOpen((value) => !value);
-      } else if (event.key === "Escape" && open) {
+      } else if (event.key === "Escape") {
         close();
       }
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [isAdmin, open, close]);
+  }, [isAdmin, close]);
 
   useEffect(() => {
     if (open) {
