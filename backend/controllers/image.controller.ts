@@ -15,7 +15,7 @@ export const imageSignedUrl = (req: Request, res: Response) => {
   const signature = cloudinary.utils.api_sign_request(
     {
       timestamp,
-      asset_folder: "e-tourism",
+      asset_folder: "e-tourism", // must match formData.append("asset_folder", "e-tourism") on the client
     },
     apiSecret,
   );
@@ -26,16 +26,15 @@ export const imageSignedUrl = (req: Request, res: Response) => {
 
 export const deleteImage = async (req: Request, res: Response) => {
   try {
-  const { id } = req.params;
-  if (!id || typeof id !== 'string' || id.trim().length === 0) {
-    return res.status(400).json(apiResponse(400, { message: "Invalid image ID" }));
-  }
-    const result = await cloudinary.uploader.destroy(id as string, { invalidate: true });
-    if (result.result === 'ok') {
-      return res.status(200).json(apiResponse(200, { message: "Image deleted successfully" }));
-    } else {
-      return res.status(404).json(apiResponse(404, { message: "Image not found or already deleted" }));
+    const { id } = req.params;
+    if (!id || typeof id !== "string" || id.trim().length === 0) {
+      return res.status(400).json(apiResponse(400, { message: "Invalid image ID" }));
     }
+    const result = await cloudinary.uploader.destroy(id, { invalidate: true });
+    if (result.result === "ok") {
+      return res.status(200).json(apiResponse(200, { message: "Image deleted successfully" }));
+    }
+    return res.status(404).json(apiResponse(404, { message: "Image not found or already deleted" }));
   } catch (error) {
     console.error("Error deleting image:", error);
     return res.status(500).json(apiResponse(500, { message: "Internal server error" }));
