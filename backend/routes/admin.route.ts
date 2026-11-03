@@ -9,7 +9,5 @@ adminRouter.get("/bookings", getBookings);
 adminRouter.patch("/booking/status", updatePackageStatus);
 adminRouter.patch("/:id", updatePackage);
 adminRouter.delete("/:id", deletePackage);
-// adminRouter.patch("/:id", updatePackage);
-
 
 export default adminRouter;

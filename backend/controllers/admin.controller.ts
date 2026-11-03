@@ -1,25 +1,25 @@
 import type { Request, Response } from "express";
 import { prisma } from "../lib/prisma.ts";
-import z, { number, ZodError } from "zod";
+import z, { ZodError } from "zod";
 import { apiResponse } from "../helpers/apiResponse.ts";
 import { packageSchema, filterBookingsSchema, validateBookingStatus } from "../types/package.ts";
 import { v2 as cloudinary } from "cloudinary";
 import cloudinaryConfig from "../lib/cloudinaryStorage.ts";
 
 cloudinaryConfig; // Ensure Cloudinary is configured
+
+const withTimeout = <T>(promise: Promise<T>, ms: number) =>
+  Promise.race([
+    promise,
+    new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error("Cloudinary request timed out")), ms),
+    ),
+  ]);
 //? creates a new package
 export const postPackage = async (req: Request, res: Response) => {
   try {
     const request = req.body;
     const validatedData = packageSchema.parse(request);
-const withTimeout = <T>(promise: Promise<T>, ms: number) =>
-  Promise.race([
-    promise,
-    new Promise<never>((_, reject) =>
-      setTimeout(() => reject(new Error("Cloudinary request timed out")), ms)
-    ),
-  ]);
-
     const imageResults = await Promise.allSettled(
       (validatedData.images ?? []).map((img) =>
         withTimeout(cloudinary.api.resource(img.public_id), 5000)
@@ -67,7 +67,7 @@ const withTimeout = <T>(promise: Promise<T>, ms: number) =>
         location: validatedData.location,
         description:
           validatedData.description || "Sorry, no description provided.",
-        price: Number(validatedData.price),
+        price: validatedData.price,
         media: {
           create:
             validatedData?.images?.map((img) => ({
@@ -98,7 +98,7 @@ const withTimeout = <T>(promise: Promise<T>, ms: number) =>
     }
 
     console.error("Error creating package:", error);
-    return res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json(apiResponse(500, { message: "Internal server error" }));
   }
 };
 
@@ -134,7 +134,7 @@ const updatedPackage = await prisma.package.update({
     name: validatedData.name,
     location: validatedData.location,
     description: validatedData.description || "Sorry, no description provided.",
-    price: Number(validatedData.price),
+    price: validatedData.price,
     media: {
       upsert: validatedData.images?.map((img) => ({
         where: { public_id: img.public_id },
@@ -174,7 +174,7 @@ await Promise.allSettled(
         })),
       });
     }
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json(apiResponse(500, { message: "Internal server error" }));
   }
 };
 
@@ -185,7 +185,8 @@ export const deletePackage = async (req:Request , res: Response)=>{
     if(!id || typeof id !== 'string' || id.trim().length === 0) return res.status(400).json(apiResponse(400, { message: "Invalid package ID" }));
     const dbPackage = await prisma.package.findUnique({ where: { id: id as string }, include: { media: true } });
     if(!dbPackage) return res.status(404).json(apiResponse(404, { message: "Package not found" }));
-    await prisma.media.deleteMany({ where: { packageId: id } });    const deleteDBPackage = await prisma.package.delete({ where: { id: id as string } });
+    await prisma.media.deleteMany({ where: { packageId: id } });
+    await prisma.package.delete({ where: { id: id as string } });
     // Cloudinary cleanup after DB deletion succeeds
     const cloudinaryResults = await Promise.allSettled(dbPackage.media.map((media) => cloudinary.uploader.destroy(media.public_id, {invalidate: true})));
     const failedDeletions = cloudinaryResults.filter(r => r.status === 'rejected');

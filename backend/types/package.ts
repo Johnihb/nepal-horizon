@@ -5,7 +5,7 @@ export const packageSchema = z.object({
   name: z.string().min(2).max(100),
   location: z.string().min(2).max(100),
   description: z.string().max(255).optional(),
-  price: z.number().positive().or(z.string()),  
+  price: z.coerce.number().positive(), 
   images: z
     .array(
       z.object({

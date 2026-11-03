@@ -21,7 +21,7 @@ const adminAuth = async (
     }
 
     // User is authenticated but is not an admin
-    if (session.user.role?.toLowerCase() !== "admin") {
+    if (session.user.role !== "ADMIN") {
       return res.status(403).json({
         error: "Forbidden: Admin access required",
       });
