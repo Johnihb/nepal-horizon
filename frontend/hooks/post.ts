@@ -94,8 +94,7 @@ export function useUpdateBookingStatus() {
       updateBookingStatus(id, status),
     onMutate: async ({ id, status }) => {
       await queryClient.cancelQueries({ queryKey: ["adminBookings"] });
-      const previous = queryClient.getQueryData<unknown[]>(["adminBookings"]);
-      // Optimistically update every cached adminBookings variant.
+      const previous = queryClient.getQueriesData({ queryKey: ["adminBookings"] });
       queryClient.setQueriesData({ queryKey: ["adminBookings"] }, (old: unknown) => {
         if (!Array.isArray(old)) return old;
         return old.map((b) =>
@@ -107,8 +106,10 @@ export function useUpdateBookingStatus() {
       return { previous };
     },
     onError: (error, _vars, context) => {
-      if (context?.previous !== undefined) {
-        queryClient.setQueryData(["adminBookings"], context.previous);
+      if (Array.isArray(context?.previous)) {
+        for (const [key, data] of context.previous) {
+          queryClient.setQueryData(key, data);
+        }
       }
       toast.error(toApiError(error).message);
     },
@@ -152,6 +153,9 @@ export function useUpdateBookingStatus() {
       }
 
       return { uploaded, failed: failures.length };
+    },
+    onError: (error) => {
+      toast.error(toApiError(error).message);
     },
   });
 }
