@@ -6,12 +6,20 @@ import { Resend } from "resend";
 
 const githubClientId = process.env.GITHUB_CLIENT_ID;
 const githubClientSecret = process.env.GITHUB_CLIENT_SECRET;
+const googleClientId = process.env.GOOGLE_CLIENT_ID;
+const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
 const resendApiKey = process.env.RESEND_API_KEY;
 const resend = new Resend(resendApiKey);
 
 if (!githubClientId || !githubClientSecret) {
   throw new Error(
     "Missing required GitHub OAuth environment variables: GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET",
+  );
+}
+
+if (!googleClientId || !googleClientSecret) {
+  throw new Error(
+    "Missing required Google OAuth environment variables: GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET",
   );
 }
 
@@ -81,10 +89,10 @@ export const auth = betterAuth({
       clientId: githubClientId,
       clientSecret: githubClientSecret,
     },
-    // google: {
-    //   clientId: process.env.GOOGLE_CLIENT_ID!,
-    //   clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    // }
+    google: {
+      clientId: googleClientId,
+      clientSecret: googleClientSecret,
+    },
   },
   trustedOrigins: ["http://localhost:3000"],
 });
