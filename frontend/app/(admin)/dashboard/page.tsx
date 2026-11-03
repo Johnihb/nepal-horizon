@@ -6,6 +6,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { AnalyticsTable } from "@/components/dashboard/analytics-table";
 import { LineChart } from "@/components/dashboard/line-chart";
+import { PackagePieChart } from "@/components/dashboard/package-pie-chart";
 import { StatsCards } from "@/components/dashboard/stats-cards";
 import { formatShortDate, toDate } from "@/components/dashboard/chart-config";
 import {
@@ -16,7 +17,7 @@ import {
 import PageHero from "@/components/site/page-hero";
 import SiteShell from "@/components/site/site-shell";
 import { EmptyState, ErrorNote, LoadingBlock } from "@/components/site/states";
-import { useBookingAnalytics } from "@/hooks/get";
+import { useBookingAnalytics, useAdminBookings } from "@/hooks/get";
 import { toApiError } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { useSession } from "@/hooks/session";
@@ -219,11 +220,52 @@ function AnalyticsConsole() {
           </section>
         </>
       ) : null}
+
+      <section aria-labelledby="popular-heading">
+        <h2 id="popular-heading" className="nh-eyebrow nh-eyebrow-row">
+          <span>Most booked</span>
+          <span className="nh-num" aria-hidden="true">
+            04
+          </span>
+        </h2>
+        <div className="mt-6">
+          <PopularPackages />
+        </div>
+      </section>
     </div>
   );
 }
 
-/** "12 records · 12 Jul 2026 — 18 Jul 2026" */
+function PopularPackages() {
+  const { data, isPending, isError, error } = useAdminBookings();
+  const bookings = data ?? [];
+
+  if (isPending) {
+    return <LoadingBlock rows={1} label="Loading package popularity…" />;
+  }
+
+  if (isError) {
+    return (
+      <ErrorNote
+        title="Popularity did not load"
+        message={toApiError(error).message}
+      />
+    );
+  }
+
+  const counts = new Map<string, number>();
+  for (const booking of bookings) {
+    if (booking.status === "CANCELLED") continue;
+    const name = booking.package.name;
+    counts.set(name, (counts.get(name) ?? 0) + 1);
+  }
+
+  const pieData = Array.from(counts, ([name, value]) => ({ name, value })).sort(
+    (a, b) => b.value - a.value,
+  );
+
+  return <PackagePieChart data={pieData} />;
+}
 function describeWindow(
   timestamps: string[],
   range: AnalyticsRange,
