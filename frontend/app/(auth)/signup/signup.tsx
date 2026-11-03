@@ -125,12 +125,13 @@ export default function SignupPage() {
 
     setPending(true);
     setFormError(null);
-
+//! TODO : create a verify email page and redirect to that page after signup instead of packages page
     try {
       const { error } = await authClient.signUp.email({
         name: name.trim(),
         email: email.trim(),
         password,
+        callbackURL: "http://localhost:3000/verify-email",
       });
 
       if (error) {
