@@ -1667,14 +1667,14 @@ html:has(.nh-route) {
   }
 
   .nh-btn-ink {
-    background: var(--nh-page-fg);
-    color: var(--nh-page-bg);
-    border: 1px solid var(--nh-page-fg);
+    background: color-mix(in srgb, var(--nh-page-fg) 12%, transparent);
+    color: var(--nh-page-fg);
+    border: 1px solid color-mix(in srgb, var(--nh-page-fg) 35%, transparent);
   }
 
   .nh-btn-ink:hover:not(:disabled) {
-    background: var(--nh-page-bg);
-    color: var(--nh-page-fg);
+    background: var(--nh-page-fg);
+    color: var(--nh-page-bg);
     border-color: var(--nh-page-fg);
     outline: 1px solid var(--nh-page-fg);
   }
@@ -1683,6 +1683,8 @@ html:has(.nh-route) {
     background: var(--nh-page-fg);
     color: var(--nh-page-bg);
     border-color: var(--nh-page-fg);
+    filter: brightness(0.82);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.28);
   }
 
   .nh-btn-ghost {
