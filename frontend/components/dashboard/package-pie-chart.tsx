@@ -86,7 +86,13 @@ export function PackagePieChart({
       {data.length === 0 ? (
         <p className="nh-meta py-12 text-center">No bookings to chart yet.</p>
       ) : (
-        <div suppressHydrationWarning>
+        <div
+          suppressHydrationWarning
+          role="img"
+          aria-label={`Package popularity: ${data
+            .map((d) => `${d.name} ${total ? Math.round((d.value / total) * 100) : 0}%`)
+            .join(", ")}`}
+        >
           <ResponsiveContainer width="100%" height={320}>
             <RechartsPieChart>
               <Pie

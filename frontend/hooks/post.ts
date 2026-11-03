@@ -1,6 +1,7 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 import {
   createBooking,
@@ -21,8 +22,12 @@ export function usePostBooking(packageId: string) {
   return useMutation({
     mutationKey: ["postBooking", packageId],
     mutationFn: (payload: BookingPayload) => createBooking(packageId, payload),
-    onSuccess: () => {
+    onSuccess: (message) => {
       queryClient.invalidateQueries({ queryKey: ["bookedPackages"] });
+      toast.success(message || "Journey booked.");
+    },
+    onError: (error) => {
+      toast.error(toApiError(error).message);
     },
   });
 }
@@ -36,6 +41,10 @@ export function useCreatePackage() {
     mutationFn: (payload: PackagePayload) => createPackage(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["packagePagination"] });
+      toast.success("Journey published.");
+    },
+    onError: (error) => {
+      toast.error(toApiError(error).message);
     },
   });
 }
@@ -50,6 +59,10 @@ export function useUpdatePackage(packageId: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["packagePagination"] });
       queryClient.invalidateQueries({ queryKey: ["package", packageId] });
+      toast.success("Journey updated.");
+    },
+    onError: (error) => {
+      toast.error(toApiError(error).message);
     },
   });
 }
@@ -63,6 +76,10 @@ export function useDeletePackage(packageId: string) {
     mutationFn: () => deletePackage(packageId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["packagePagination"] });
+      toast.success("Journey removed.");
+    },
+    onError: (error) => {
+      toast.error(toApiError(error).message);
     },
   });
 }
@@ -75,9 +92,31 @@ export function useUpdateBookingStatus() {
     mutationKey: ["updateBookingStatus"],
     mutationFn: ({ id, status }: { id: string; status: BookingStatus }) =>
       updateBookingStatus(id, status),
-    onSuccess: () => {
+    onMutate: async ({ id, status }) => {
+      await queryClient.cancelQueries({ queryKey: ["adminBookings"] });
+      const previous = queryClient.getQueryData<unknown[]>(["adminBookings"]);
+      // Optimistically update every cached adminBookings variant.
+      queryClient.setQueriesData({ queryKey: ["adminBookings"] }, (old: unknown) => {
+        if (!Array.isArray(old)) return old;
+        return old.map((b) =>
+          b && typeof b === "object" && "id" in b && b.id === id
+            ? { ...b, status }
+            : b,
+        );
+      });
+      return { previous };
+    },
+    onError: (error, _vars, context) => {
+      if (context?.previous !== undefined) {
+        queryClient.setQueryData(["adminBookings"], context.previous);
+      }
+      toast.error(toApiError(error).message);
+    },
+    onSuccess: (_data, vars) => {
+      toast.success(vars.status === "CONFIRMED" ? "Booking confirmed." : "Booking cancelled.");
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["adminBookings"] });
-      // Confirming a booking moves the ledger the field office reads.
       queryClient.invalidateQueries({ queryKey: ["bookingAnalytics"] });
     },
   });
@@ -101,7 +140,16 @@ export function useUpdateBookingStatus() {
         else failures.push(result.reason);
       }
 
-      if (!uploaded.length && failures.length) throw toApiError(failures[0]);
+      if (!uploaded.length && failures.length) {
+        const err = toApiError(failures[0]);
+        toast.error(err.message);
+        throw err;
+      }
+      if (failures.length) {
+        toast.error(`${failures.length} image(s) failed to upload.`);
+      } else {
+        toast.success(`${uploaded.length} image(s) uploaded.`);
+      }
 
       return { uploaded, failed: failures.length };
     },

@@ -4,6 +4,7 @@ import "./globals.css";
 import Providers from "@/lib/tanstack/provider";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
+import { CommandPalette } from "@/components/site/command-palette";
 import { cn } from "@/lib/utils";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
@@ -59,6 +60,7 @@ export default function RootLayout({
           <Providers>
             {children}
             <Toaster position="bottom-right" />
+            <CommandPalette />
           </Providers>
         </ThemeProvider>
       </body>
