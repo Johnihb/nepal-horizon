@@ -4,12 +4,17 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
 import PageHero from "@/components/site/page-hero";
-import { ErrorNote } from "@/components/site/states";
+import { ErrorNote, LoadingBlock } from "@/components/site/states";
+import { useSession } from "@/hooks/session";
 
 export default function VerifyEmailPage() {
   const params = useSearchParams();
   const error = params.get("error");
   const verified = params.get("verified") === "1";
+
+  const { data, isPending } = useSession();
+  const user = data?.user;
+  const emailVerified = user?.emailVerified === true;
 
   if (error) {
     return (
@@ -38,7 +43,7 @@ export default function VerifyEmailPage() {
     );
   }
 
-  if (verified) {
+  if (verified || (!isPending && user && emailVerified)) {
     return (
       <>
         <div className="relative left-1/2 w-screen -translate-x-1/2">
@@ -59,6 +64,14 @@ export default function VerifyEmailPage() {
           </Link>
         </div>
       </>
+    );
+  }
+
+  if (isPending) {
+    return (
+      <div className="relative left-1/2 mt-[clamp(2.5rem,5vw,4.5rem)] w-screen -translate-x-1/2 px-[clamp(1.25rem,9vw,10.5rem)]">
+        <LoadingBlock rows={1} label="Checking your session…" />
+      </div>
     );
   }
 
