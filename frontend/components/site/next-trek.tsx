@@ -1,6 +1,6 @@
 "use client";
 
-import { useSyncExternalStore, useState, useEffect, useCallback } from "react";
+import { useSyncExternalStore, useState, useEffect } from "react";
 
 import type { TravelBooking } from "@/types/package";
 
@@ -47,20 +47,16 @@ export default function NextTrek({ booking }: { booking: TravelBooking }) {
     }
   }, [booking.id]);
 
-  const persist = useCallback(
-    (next: Record<string, boolean>) => {
-      setChecked(next);
+  const toggle = (id: string) => {
+    setChecked((prev) => {
+      const next = { ...prev, [id]: !prev[id] };
       try {
         window.localStorage.setItem(`nh:prep:${booking.id}`, JSON.stringify(next));
       } catch {
         // storage may be unavailable; state still updates in memory
       }
-    },
-    [booking.id],
-  );
-
-  const toggle = (id: string) => {
-    persist({ ...checked, [id]: !checked[id] });
+      return next;
+    });
   };
 
   const travelDate = booking.travelDate.slice(0, 10);

@@ -152,11 +152,14 @@ function CompareLedger({ ids }: { ids: string[] }) {
 
 export default function Compare() {
   const searchParams = useSearchParams();
-  const ids = (searchParams.get("ids") ?? "")
-    .split(",")
-    .map((id) => id.trim())
-    .filter(Boolean)
-    .slice(0, 3);
+  const ids = Array.from(
+    new Set(
+      (searchParams.get("ids") ?? "")
+        .split(",")
+        .map((id) => id.trim())
+        .filter(Boolean),
+    ),
+  ).slice(0, 3);
 
   return (
     <>
@@ -171,7 +174,7 @@ export default function Compare() {
           </h1>
           <p className="nh-page-lede mt-6">
             {ids.length
-              ? `${ids.length} journey${ids.length === 1 ? "" : "ies"} set against each other.`
+              ? `${ids.length} ${ids.length === 1 ? "journey" : "journeys"} set against each other.`
               : "Pick two or three journeys from the ledger to compare them."}
           </p>
         </div>

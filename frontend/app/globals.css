@@ -1957,6 +1957,11 @@ html:has(.nh-route) {
     color: var(--nh-page-invert-fg);
   }
 
+  .nh-row:focus-within {
+    outline: 2px solid var(--nh-focus);
+    outline-offset: -2px;
+  }
+
   .nh-row:hover .nh-meta,
   .nh-row:hover .nh-muted {
     color: inherit;
