@@ -12,15 +12,17 @@ export const imageSignedUrl = (req: Request, res: Response) => {
   if (!apiKey || !cloudName || !apiSecret) {
     return res.status(500).json(apiResponse(500, { message: "Cloudinary is not configured" }));
   }
+  const allowedFormats = "jpg,jpeg,png,webp,gif,avif";
   const signature = cloudinary.utils.api_sign_request(
     {
       timestamp,
       asset_folder: "e-tourism", // must match formData.append("asset_folder", "e-tourism") on the client
+      allowed_formats: allowedFormats,
     },
     apiSecret,
   );
 
-  res.status(200).json(apiResponse(200, { timestamp, apiKey, signature, cloudName, folder: "e-tourism" }));
+  res.status(200).json(apiResponse(200, { timestamp, apiKey, signature, cloudName, folder: "e-tourism", allowedFormats }));
 };
 
 

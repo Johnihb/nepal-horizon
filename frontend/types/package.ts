@@ -77,6 +77,7 @@ export type UploadSignature = {
   signature: string;
   cloudName: string;
   folder: string;
+  allowedFormats?: string;
 };
 
 export type UploadedImage = {

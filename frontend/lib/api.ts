@@ -186,6 +186,9 @@ export function uploadImage(
   form.append("asset_folder", signature.folder);
   form.append("timestamp", String(signature.timestamp));
   form.append("signature", signature.signature);
+  if (signature.allowedFormats) {
+    form.append("allowed_formats", signature.allowedFormats);
+  }
 
   return new Promise<UploadedImage>((resolve, reject) => {
     const xhr = new XMLHttpRequest();

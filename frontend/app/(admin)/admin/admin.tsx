@@ -496,6 +496,18 @@ function JourneyEditor({
 
     if (!files.length) return;
 
+    const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
+    const invalid = files.filter(
+      (file) => !file.type.startsWith("image/") || file.size > MAX_SIZE,
+    );
+    if (invalid.length) {
+      setNotice({
+        tone: "error",
+        text: `${invalid.length} file${invalid.length === 1 ? "" : "s"} rejected — images only, max 5 MB each.`,
+      });
+      return;
+    }
+
     setUploadProgress(0);
     try {
       const result = await upload.mutateAsync({ files, onProgress: setUploadProgress });
