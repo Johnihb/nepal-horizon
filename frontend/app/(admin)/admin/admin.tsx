@@ -407,6 +407,7 @@ function JourneyEditor({
   const [apiFields, setApiFields] = useState<Record<string, string>>({});
   const [notice, setNotice] = useState<{ tone: "ok" | "error"; text: string } | null>(null);
   const [confirmingCancel, setConfirmingCancel] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -495,8 +496,9 @@ function JourneyEditor({
 
     if (!files.length) return;
 
+    setUploadProgress(0);
     try {
-      const result = await upload.mutateAsync(files);
+      const result = await upload.mutateAsync({ files, onProgress: setUploadProgress });
 
       setImages((current) => [
         ...current,
@@ -511,6 +513,8 @@ function JourneyEditor({
       }
     } catch (error) {
       setNotice({ tone: "error", text: toApiError(error).message });
+    } finally {
+      setUploadProgress(0);
     }
   }
 
@@ -855,6 +859,18 @@ function JourneyEditor({
             </span>
           ) : null}
 
+          {upload.isPending ? (
+            <div className="mt-3">
+              <div className="h-2 w-full overflow-hidden border border-[color:var(--nh-page-line)] bg-[color:var(--nh-page-bg)]">
+                <div
+                  className="h-full bg-[color:var(--nh-page-fg)] transition-all duration-200"
+                  style={{ width: `${uploadProgress}%` }}
+                />
+              </div>
+              <p className="nh-meta mt-2">Uploading… {uploadProgress}%</p>
+            </div>
+          ) : null}
+
           {images.length ? (
             <ul className="mt-6 flex flex-wrap gap-5">
               {images.map((image, index) => (
@@ -891,8 +907,8 @@ function JourneyEditor({
         </div>
 
         <div className="md:col-span-2">
-          <button type="submit" className="nh-btn nh-btn-ink" disabled={saving}>
-            {saving ? "Saving…" : journey ? "Save Changes" : "Publish Journey"}
+          <button type="submit" className="nh-btn nh-btn-ink" disabled={saving || upload.isPending}>
+            {upload.isPending ? "Uploading…" : saving ? "Saving…" : journey ? "Save Changes" : "Publish Journey"}
           </button>
         </div>
       </form>
