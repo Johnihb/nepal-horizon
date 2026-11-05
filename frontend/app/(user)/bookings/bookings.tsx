@@ -97,7 +97,7 @@ export default function Bookings() {
 
   const today = new Date().toISOString().slice(0, 10);
   const upcoming = bookings
-    .filter((booking) => booking.status !== "CANCELLED")
+    .filter((booking) => booking.status === "CONFIRMED")
     .filter((booking) => booking.travelDate.slice(0, 10) >= today)
     .sort((a, b) => a.travelDate.localeCompare(b.travelDate));
   const nextBooking = upcoming[0];
