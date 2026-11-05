@@ -186,6 +186,16 @@ export default function PackageDetail({ id }: { id: string }) {
                 <div>
                   <dt className="nh-meta">Where</dt>
                   <dd className="mt-1.5">{journey.location || "—"}</dd>
+                  {journey.location ? (
+                    <a
+                      className="nh-link mt-2 inline-block text-sm"
+                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(journey.location)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      View on Google Maps →
+                    </a>
+                  ) : null}
                 </div>
                 <div>
                   <dt className="nh-meta">Group Size</dt>
