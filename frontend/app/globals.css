@@ -1940,6 +1940,7 @@ html:has(.nh-route) {
 
   .nh-row {
     align-items: center;
+    position: relative;
     border-bottom: 1px solid var(--nh-page-line);
     display: grid;
     gap: clamp(0.9rem, 2vw, 1.4rem);

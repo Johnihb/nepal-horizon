@@ -68,6 +68,11 @@ export const postPackage = async (req: Request, res: Response) => {
         description:
           validatedData.description || "Sorry, no description provided.",
         price: validatedData.price,
+        ...(validatedData.durationDays !== undefined ? { durationDays: validatedData.durationDays } : {}),
+        ...(validatedData.maxAltitude !== undefined ? { maxAltitude: validatedData.maxAltitude } : {}),
+        ...(validatedData.difficulty !== undefined ? { difficulty: validatedData.difficulty } : {}),
+        ...(validatedData.bestSeason !== undefined ? { bestSeason: validatedData.bestSeason } : {}),
+        ...(validatedData.groupSize !== undefined ? { groupSize: validatedData.groupSize } : {}),
         media: {
           create:
             validatedData?.images?.map((img) => ({
@@ -135,6 +140,11 @@ const updatedPackage = await prisma.package.update({
     location: validatedData.location,
     description: validatedData.description || "Sorry, no description provided.",
     price: validatedData.price,
+    ...(validatedData.durationDays !== undefined ? { durationDays: validatedData.durationDays } : {}),
+    ...(validatedData.maxAltitude !== undefined ? { maxAltitude: validatedData.maxAltitude } : {}),
+    ...(validatedData.difficulty !== undefined ? { difficulty: validatedData.difficulty } : {}),
+    ...(validatedData.bestSeason !== undefined ? { bestSeason: validatedData.bestSeason } : {}),
+    ...(validatedData.groupSize !== undefined ? { groupSize: validatedData.groupSize } : {}),
     media: {
       upsert: validatedData.images?.map((img) => ({
         where: { public_id: img.public_id },

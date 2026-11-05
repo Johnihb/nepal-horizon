@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 
 import JourneyRow from "@/components/site/journey-row";
 import { EmptyState, ErrorNote, LoadingBlock } from "@/components/site/states";
@@ -28,6 +28,17 @@ function Ledger() {
   const { data, error, isError, isLoading, isFetching } = usePackagePagination(page);
   const journeys = data?.packages ?? [];
   const nextPage = data?.nextPage ?? null;
+
+  const [compareMode, setCompareMode] = useState(false);
+  const [selected, setSelected] = useState<string[]>([]);
+
+  function toggleCompare(id: string) {
+    setSelected((current) => {
+      if (current.includes(id)) return current.filter((item) => item !== id);
+      if (current.length >= 3) return current;
+      return [...current, id];
+    });
+  }
 
   if (isError) {
     return (
@@ -77,9 +88,42 @@ function Ledger() {
 
   return (
     <>
+      <div className="mb-6 flex flex-wrap items-center gap-3">
+        <button
+          type="button"
+          className="nh-btn nh-btn-ghost nh-btn-sm"
+          onClick={() => {
+            setCompareMode((value) => !value);
+            if (compareMode) setSelected([]);
+          }}
+          aria-pressed={compareMode}
+        >
+          {compareMode ? "Done comparing" : "Compare journeys"}
+        </button>
+        {compareMode && selected.length >= 2 ? (
+          <Link
+            className="nh-btn nh-btn-ink nh-btn-sm"
+            href={`/compare?ids=${selected.join(",")}`}
+          >
+            Compare {selected.length} →
+          </Link>
+        ) : null}
+        {compareMode ? (
+          <span className="nh-meta">
+            {selected.length}/3 selected — pick two or three.
+          </span>
+        ) : null}
+      </div>
+
       <div className="nh-ledger">
         {journeys.map((journey) => (
-          <JourneyRow key={journey.id} journey={journey} />
+          <JourneyRow
+            key={journey.id}
+            journey={journey}
+            compareMode={compareMode}
+            compared={selected.includes(journey.id)}
+            onToggleCompare={toggleCompare}
+          />
         ))}
       </div>
 

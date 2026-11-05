@@ -42,6 +42,11 @@ type Draft = {
   location: string;
   description: string;
   price: string;
+  durationDays: string;
+  maxAltitude: string;
+  difficulty: string;
+  bestSeason: string;
+  groupSize: string;
 };
 
 type PendingImage = UploadedImage & {
@@ -49,7 +54,17 @@ type PendingImage = UploadedImage & {
   existing: boolean;
 };
 
-const EMPTY_DRAFT: Draft = { name: "", location: "", description: "", price: "" };
+const EMPTY_DRAFT: Draft = {
+  name: "",
+  location: "",
+  description: "",
+  price: "",
+  durationDays: "",
+  maxAltitude: "",
+  difficulty: "",
+  bestSeason: "",
+  groupSize: "",
+};
 
 /**
  * The console. (admin)/layout.tsx already resolved the session, so there is no
@@ -373,6 +388,11 @@ function JourneyEditor({
     location: journey?.location ?? "",
     description: journey?.description ?? "",
     price: journey ? String(journey.price) : "",
+    durationDays: journey?.durationDays ? String(journey.durationDays) : "",
+    maxAltitude: journey?.maxAltitude ? String(journey.maxAltitude) : "",
+    difficulty: journey?.difficulty ?? "",
+    bestSeason: journey?.bestSeason ?? "",
+    groupSize: journey?.groupSize ? String(journey.groupSize) : "",
   }));
 
   const [images, setImages] = useState<PendingImage[]>(() =>
@@ -396,6 +416,11 @@ function JourneyEditor({
     location: journey?.location ?? "",
     description: journey?.description ?? "",
     price: journey ? String(journey.price) : "",
+    durationDays: journey?.durationDays ? String(journey.durationDays) : "",
+    maxAltitude: journey?.maxAltitude ? String(journey.maxAltitude) : "",
+    difficulty: journey?.difficulty ?? "",
+    bestSeason: journey?.bestSeason ?? "",
+    groupSize: journey?.groupSize ? String(journey.groupSize) : "",
     images: (journey?.media ?? []).map((media) => media.public_id).join("|"),
   }));
 
@@ -411,6 +436,11 @@ function JourneyEditor({
     draft.location !== baseline.location ||
     draft.description !== baseline.description ||
     draft.price !== baseline.price ||
+    draft.durationDays !== baseline.durationDays ||
+    draft.maxAltitude !== baseline.maxAltitude ||
+    draft.difficulty !== baseline.difficulty ||
+    draft.bestSeason !== baseline.bestSeason ||
+    draft.groupSize !== baseline.groupSize ||
     images.map((image) => image.public_id).join("|") !== baseline.images;
 
   /** Cancelling throws the draft away, so an edited journey asks first. */
@@ -517,6 +547,22 @@ function JourneyEditor({
 
     const description = draft.description.trim();
     if (description) payload.description = description;
+
+    const durationDays = Number(draft.durationDays);
+    if (draft.durationDays.trim() && Number.isFinite(durationDays) && durationDays > 0) {
+      payload.durationDays = durationDays;
+    }
+    const maxAltitude = Number(draft.maxAltitude);
+    if (draft.maxAltitude.trim() && Number.isFinite(maxAltitude) && maxAltitude > 0) {
+      payload.maxAltitude = maxAltitude;
+    }
+    if (draft.difficulty.trim()) payload.difficulty = draft.difficulty as PackagePayload["difficulty"];
+    const bestSeason = draft.bestSeason.trim();
+    if (bestSeason) payload.bestSeason = bestSeason;
+    const groupSize = Number(draft.groupSize);
+    if (draft.groupSize.trim() && Number.isFinite(groupSize) && groupSize > 0) {
+      payload.groupSize = groupSize;
+    }
 
     try {
       if (journey) {
@@ -666,6 +712,95 @@ function JourneyEditor({
               {fieldError("price")}
             </span>
           ) : null}
+        </div>
+
+        <div>
+          <label className="nh-label" htmlFor="journey-duration">
+            Duration (days)
+          </label>
+          <input
+            id="journey-duration"
+            name="durationDays"
+            type="number"
+            className="nh-input"
+            inputMode="numeric"
+            min="1"
+            step="1"
+            value={draft.durationDays}
+            onChange={(event) => updateField("durationDays", event.target.value)}
+            placeholder="12"
+          />
+        </div>
+
+        <div>
+          <label className="nh-label" htmlFor="journey-altitude">
+            Max altitude (m)
+          </label>
+          <input
+            id="journey-altitude"
+            name="maxAltitude"
+            type="number"
+            className="nh-input"
+            inputMode="numeric"
+            min="1"
+            step="1"
+            value={draft.maxAltitude}
+            onChange={(event) => updateField("maxAltitude", event.target.value)}
+            placeholder="5416"
+          />
+        </div>
+
+        <div>
+          <label className="nh-label" htmlFor="journey-difficulty">
+            Difficulty
+          </label>
+          <select
+            id="journey-difficulty"
+            name="difficulty"
+            className="nh-input"
+            value={draft.difficulty}
+            onChange={(event) => updateField("difficulty", event.target.value)}
+          >
+            <option value="">—</option>
+            <option value="EASY">Easy</option>
+            <option value="MODERATE">Moderate</option>
+            <option value="CHALLENGING">Challenging</option>
+            <option value="STRENUOUS">Strenuous</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="nh-label" htmlFor="journey-season">
+            Best season
+          </label>
+          <input
+            id="journey-season"
+            name="bestSeason"
+            type="text"
+            className="nh-input"
+            autoComplete="off"
+            value={draft.bestSeason}
+            onChange={(event) => updateField("bestSeason", event.target.value)}
+            placeholder="Mar–May, Sep–Nov"
+          />
+        </div>
+
+        <div>
+          <label className="nh-label" htmlFor="journey-group">
+            Group size (max)
+          </label>
+          <input
+            id="journey-group"
+            name="groupSize"
+            type="number"
+            className="nh-input"
+            inputMode="numeric"
+            min="1"
+            step="1"
+            value={draft.groupSize}
+            onChange={(event) => updateField("groupSize", event.target.value)}
+            placeholder="8"
+          />
         </div>
 
         <div className="md:col-span-2">

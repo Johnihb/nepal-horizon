@@ -111,6 +111,21 @@ export default function PackageDetail({ id }: { id: string }) {
           {[
             { label: "Where", value: journey.location || "—" },
             { label: "Per Person", value: price },
+            ...(journey.durationDays
+              ? [{ label: "Duration", value: `${journey.durationDays} days` }]
+              : []),
+            ...(journey.maxAltitude
+              ? [{ label: "Max Altitude", value: `${journey.maxAltitude.toLocaleString("en-US")} m` }]
+              : []),
+            ...(journey.difficulty
+              ? [{ label: "Difficulty", value: journey.difficulty.charAt(0) + journey.difficulty.slice(1).toLowerCase() }]
+              : []),
+            ...(journey.bestSeason
+              ? [{ label: "Best Season", value: journey.bestSeason }]
+              : []),
+            ...(journey.groupSize
+              ? [{ label: "Group Size", value: `Up to ${journey.groupSize}` }]
+              : []),
             { label: "Published", value: formatDate(journey.createdAt) },
             { label: "Photographs", value: String(journey.media?.length ?? 0) },
           ].map((fact) => (

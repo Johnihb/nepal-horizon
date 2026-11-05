@@ -14,12 +14,19 @@ export type PackageMedia = {
   packageId: string;
 };
 
+export type Difficulty = "EASY" | "MODERATE" | "CHALLENGING" | "STRENUOUS";
+
 export type TravelPackage = {
   id: string;
   name: string;
   location: string;
   description: string | null;
   price: number;
+  durationDays?: number | null;
+  maxAltitude?: number | null;
+  difficulty?: Difficulty | null;
+  bestSeason?: string | null;
+  groupSize?: number | null;
   createdAt: string;
   updatedAt: string;
   media?: PackageMedia[];
@@ -38,6 +45,11 @@ export type PackagePayload = {
   location: string;
   description?: string;
   price: number;
+  durationDays?: number;
+  maxAltitude?: number;
+  difficulty?: Difficulty;
+  bestSeason?: string;
+  groupSize?: number;
   images: Array<{ public_id: string; url: string }>;
 };
 

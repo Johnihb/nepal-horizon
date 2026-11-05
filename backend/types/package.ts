@@ -1,11 +1,16 @@
 import z from "zod";
-import { BookingStatus } from "../generated/prisma/enums.ts";
+import { BookingStatus, Difficulty } from "../generated/prisma/enums.ts";
 
 export const packageSchema = z.object({
   name: z.string().min(2).max(100),
   location: z.string().min(2).max(100),
   description: z.string().max(255).optional(),
-  price: z.coerce.number().positive(), 
+  price: z.coerce.number().positive(),
+  durationDays: z.coerce.number().int().positive().optional(),
+  maxAltitude: z.coerce.number().int().positive().optional(),
+  difficulty: z.enum(Difficulty).optional(),
+  bestSeason: z.string().max(60).optional(),
+  groupSize: z.coerce.number().int().positive().optional(),
   images: z
     .array(
       z.object({

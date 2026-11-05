@@ -38,6 +38,12 @@ model Package {
   location    String
   description String?
   price       Float
+  // Trek metadata used for comparison and the field-office ledger.
+  durationDays Int?
+  maxAltitude  Int?
+  difficulty   Difficulty?
+  bestSeason   String?
+  groupSize    Int?
   media Media[] // Relation to Media model
  
   updatedAt   DateTime @updatedAt
@@ -123,6 +129,13 @@ model Verification {
 enum Role {
   USER
   ADMIN
+}
+
+enum Difficulty {
+  EASY
+  MODERATE
+  CHALLENGING
+  STRENUOUS
 }
 
 model Media {

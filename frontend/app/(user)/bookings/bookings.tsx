@@ -3,6 +3,7 @@
 import Link from "next/link";
 
 import JourneyPlate from "@/components/site/journey-plate";
+import NextTrek from "@/components/site/next-trek";
 import { EmptyState, ErrorNote, LoadingBlock } from "@/components/site/states";
 import { useBookedPackages } from "@/hooks/get";
 import { useSession } from "@/hooks/session";
@@ -94,6 +95,13 @@ export default function Bookings() {
 
   const bookings = data ?? [];
 
+  const today = new Date().toISOString().slice(0, 10);
+  const upcoming = bookings
+    .filter((booking) => booking.status !== "CANCELLED")
+    .filter((booking) => booking.travelDate.slice(0, 10) >= today)
+    .sort((a, b) => a.travelDate.localeCompare(b.travelDate));
+  const nextBooking = upcoming[0];
+
   return (
     <>
       <section className="nh-page-hero">
@@ -155,11 +163,14 @@ export default function Bookings() {
             }
           />
         ) : (
-          <div className="nh-ledger">
-            {bookings.map((booking) => (
-              <BookingRow key={booking.id} booking={booking} />
-            ))}
-          </div>
+          <>
+            {nextBooking ? <NextTrek booking={nextBooking} /> : null}
+            <div className="nh-ledger mt-10">
+              {bookings.map((booking) => (
+                <BookingRow key={booking.id} booking={booking} />
+              ))}
+            </div>
+          </>
         )}
       </div>
     </>
