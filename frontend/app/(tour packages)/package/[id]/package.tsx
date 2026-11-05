@@ -187,14 +187,27 @@ export default function PackageDetail({ id }: { id: string }) {
                   <dt className="nh-meta">Where</dt>
                   <dd className="mt-1.5">{journey.location || "—"}</dd>
                   {journey.location ? (
-                    <a
-                      className="nh-link mt-2 inline-block text-sm"
-                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(journey.location)}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      View on Google Maps →
-                    </a>
+                    <div className="mt-3 space-y-3">
+                      <div className="overflow-hidden border border-[color:var(--nh-page-line)]">
+                        <iframe
+                          title={`Map of ${journey.location}`}
+                          src={`https://www.google.com/maps?q=${encodeURIComponent(journey.location + ", Nepal")}&output=embed`}
+                          width="100%"
+                          height="220"
+                          style={{ border: 0 }}
+                          loading="lazy"
+                          referrerPolicy="no-referrer-when-downgrade"
+                        />
+                      </div>
+                      <a
+                        className="nh-link inline-block text-sm"
+                        href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(journey.location + ", Nepal")}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Know more on Google Maps →
+                      </a>
+                    </div>
                   ) : null}
                 </div>
                 <div>
