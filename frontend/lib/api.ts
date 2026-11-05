@@ -175,7 +175,11 @@ export async function fetchUploadSignature(): Promise<UploadSignature> {
  * POST the file straight to Cloudinary. The server never sees the bytes.
  * `asset_folder` must match the folder the signature was computed over.
  */
-export async function uploadImage(file: File, signature: UploadSignature): Promise<UploadedImage> {
+export function uploadImage(
+  file: File,
+  signature: UploadSignature,
+  onProgress?: (pct: number) => void,
+): Promise<UploadedImage> {
   const form = new FormData();
   form.append("file", file);
   form.append("api_key", signature.apiKey);
@@ -183,23 +187,42 @@ export async function uploadImage(file: File, signature: UploadSignature): Promi
   form.append("timestamp", String(signature.timestamp));
   form.append("signature", signature.signature);
 
-  const response = await fetch(`https://api.cloudinary.com/v1_1/${signature.cloudName}/upload`, {
-    method: "POST",
-    body: form,
+  return new Promise<UploadedImage>((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", `https://api.cloudinary.com/v1_1/${signature.cloudName}/upload`);
+    xhr.upload.onprogress = (event) => {
+      if (event.lengthComputable && onProgress) {
+        onProgress(Math.round((event.loaded / event.total) * 100));
+      }
+    };
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        try {
+          const result = JSON.parse(xhr.responseText) as { secure_url?: string; public_id?: string };
+          if (result.secure_url && result.public_id) {
+            resolve({ url: result.secure_url, public_id: result.public_id });
+          } else {
+            reject(new ApiError("Upload finished without a usable image reference."));
+          }
+        } catch {
+          reject(new ApiError("Upload finished without a usable image reference."));
+        }
+      } else {
+        let detail = "";
+        try {
+          detail = xhr.responseText;
+        } catch {
+          /* ignore */
+        }
+        reject(
+          new ApiError(
+            detail ? `Upload rejected: ${detail.slice(0, 180)}` : "Upload rejected. Check the file and try again.",
+            xhr.status,
+          ),
+        );
+      }
+    };
+    xhr.onerror = () => reject(new ApiError("Upload failed. Check your connection and try again."));
+    xhr.send(form);
   });
-
-  if (!response.ok) {
-    const detail = await response.text().catch(() => "");
-    throw new ApiError(
-      detail ? `Upload rejected: ${detail.slice(0, 180)}` : "Upload rejected. Check the file and try again.",
-      response.status,
-    );
-  }
-
-  const result = (await response.json()) as { secure_url?: string; public_id?: string };
-  if (!result.secure_url || !result.public_id) {
-    throw new ApiError("Upload finished without a usable image reference.");
-  }
-
-  return { url: result.secure_url, public_id: result.public_id };
 }

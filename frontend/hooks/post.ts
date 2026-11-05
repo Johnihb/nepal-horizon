@@ -132,14 +132,18 @@ export function useUpdateBookingStatus() {
     mutationFn: async ({ files, onProgress }: { files: File[]; onProgress?: (pct: number) => void }) => {
       const signature = await fetchUploadSignature();
       const total = files.length;
-      let completed = 0;
+      const progress = new Array(total).fill(0);
+      const report = () => {
+        const avg = progress.reduce((a, b) => a + b, 0) / total;
+        onProgress?.(Math.round(avg));
+      };
       const settled = await Promise.allSettled(
-        files.map(async (file) => {
-          const result = await uploadImage(file, signature);
-          completed += 1;
-          onProgress?.(Math.round((completed / total) * 100));
-          return result;
-        }),
+        files.map((file, i) =>
+          uploadImage(file, signature, (pct) => {
+            progress[i] = pct;
+            report();
+          }),
+        ),
       );
 
       const uploaded: UploadedImage[] = [];
