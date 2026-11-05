@@ -1903,21 +1903,7 @@ html:has(.nh-route) {
     color: var(--nh-accent);
   }
 
-  /* ---- ken burns (package hero) --------------------------------------- */
-  .nh-ken-burns img {
-    animation: nh-ken-burns 18s ease-in-out infinite alternate;
-    transform-origin: center;
-    will-change: transform;
-  }
-
-  @keyframes nh-ken-burns {
-    from {
-      transform: scale(1);
-    }
-    to {
-      transform: scale(1.08);
-    }
-  }
+  /* ---- loading -------------------------------------------------------- */
 
   .nh-skeleton {
     background: linear-gradient(
@@ -2091,9 +2077,5 @@ html:has(.nh-route) {
 
   .nh-btn:hover:not(:disabled) {
     transform: none;
-  }
-
-  .nh-ken-burns img {
-    animation: none;
   }
 }

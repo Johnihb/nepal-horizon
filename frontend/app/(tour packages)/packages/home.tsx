@@ -2,14 +2,12 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useState } from "react";
+import { Suspense } from "react";
 
 import JourneyRow from "@/components/site/journey-row";
-import JourneyPlate from "@/components/site/journey-plate";
 import { EmptyState, ErrorNote, LoadingBlock } from "@/components/site/states";
 import { usePackagePagination } from "@/hooks/get";
 import { toApiError } from "@/lib/api";
-import { formatMoney } from "@/lib/format";
 
 /** The page before this one, or null when this is the first. */
 function retreatHref(page: number): string | null {
@@ -30,8 +28,6 @@ function Ledger() {
   const { data, error, isError, isLoading, isFetching } = usePackagePagination(page);
   const journeys = data?.packages ?? [];
   const nextPage = data?.nextPage ?? null;
-
-  const [filter, setFilter] = useState<string | null>(null);
 
   if (isError) {
     return (
@@ -76,65 +72,13 @@ function Ledger() {
     );
   }
 
-  const locations = Array.from(new Set(journeys.map((j) => j.location))).sort();
-  const filtered = filter ? journeys.filter((j) => j.location === filter) : journeys;
-  const featured = !filter && page === 0 ? journeys[0] : null;
-  const rest = featured ? filtered.slice(1) : filtered;
-
   const back = retreatHref(page);
   const forward = nextHref(nextPage);
 
   return (
     <>
-      {locations.length > 1 ? (
-        <div className="mb-10 flex flex-wrap gap-2" role="group" aria-label="Filter by region">
-          <button
-            type="button"
-            onClick={() => setFilter(null)}
-            className={`nh-btn nh-btn-sm ${filter === null ? "nh-btn-ink" : "nh-btn-ghost"}`}
-            aria-pressed={filter === null}
-          >
-            All
-          </button>
-          {locations.map((loc) => (
-            <button
-              key={loc}
-              type="button"
-              onClick={() => setFilter(loc)}
-              className={`nh-btn nh-btn-sm ${filter === loc ? "nh-btn-ink" : "nh-btn-ghost"}`}
-              aria-pressed={filter === loc}
-            >
-              {loc}
-            </button>
-          ))}
-        </div>
-      ) : null}
-
-      {featured ? (
-        <Link
-          href={`/package/${featured.id}`}
-          className="group mb-12 grid gap-6 border border-[color:var(--nh-page-line)] p-6 transition-colors hover:bg-[color:var(--nh-page-invert-bg)] hover:text-[color:var(--nh-page-invert-fg)] lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]"
-        >
-          <div className="min-w-0">
-            <p className="nh-eyebrow nh-eyebrow-row">
-              <span>This Season</span>
-              <span className="nh-num">01</span>
-            </p>
-            <h2 className="nh-display-1 mt-6">{featured.name}</h2>
-            <p className="nh-page-lede mt-4 max-w-md">{featured.location}</p>
-            <p className="nh-meta mt-6">{formatMoney(featured.price)} per person</p>
-          </div>
-          <JourneyPlate
-            media={featured.media}
-            label={featured.location}
-            alt={`${featured.name} — ${featured.location}`}
-            className="aspect-[16/9] w-full"
-          />
-        </Link>
-      ) : null}
-
       <div className="nh-ledger">
-        {rest.map((journey) => (
+        {journeys.map((journey) => (
           <JourneyRow key={journey.id} journey={journey} />
         ))}
       </div>
