@@ -11,6 +11,7 @@ export const packageSchema = z.object({
   difficulty: z.enum(Difficulty).optional(),
   bestSeason: z.string().max(60).optional(),
   groupSize: z.coerce.number().int().positive().optional(),
+  route: z.any().optional(),
   images: z
     .array(
       z.object({

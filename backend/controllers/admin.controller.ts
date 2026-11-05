@@ -73,6 +73,7 @@ export const postPackage = async (req: Request, res: Response) => {
         ...(validatedData.difficulty !== undefined ? { difficulty: validatedData.difficulty } : {}),
         ...(validatedData.bestSeason !== undefined ? { bestSeason: validatedData.bestSeason } : {}),
         ...(validatedData.groupSize !== undefined ? { groupSize: validatedData.groupSize } : {}),
+        ...(validatedData.route !== undefined ? { route: validatedData.route } : {}),
         media: {
           create:
             validatedData?.images?.map((img) => ({
@@ -145,6 +146,7 @@ const updatedPackage = await prisma.package.update({
     ...(validatedData.difficulty !== undefined ? { difficulty: validatedData.difficulty } : {}),
     ...(validatedData.bestSeason !== undefined ? { bestSeason: validatedData.bestSeason } : {}),
     ...(validatedData.groupSize !== undefined ? { groupSize: validatedData.groupSize } : {}),
+    ...(validatedData.route !== undefined ? { route: validatedData.route } : {}),
     media: {
       upsert: validatedData.images?.map((img) => ({
         where: { public_id: img.public_id },

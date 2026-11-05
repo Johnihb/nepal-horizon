@@ -44,6 +44,7 @@ model Package {
   difficulty   Difficulty?
   bestSeason   String?
   groupSize    Int?
+  route       Json?
   media Media[] // Relation to Media model
  
   updatedAt   DateTime @updatedAt

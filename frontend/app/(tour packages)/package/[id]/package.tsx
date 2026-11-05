@@ -3,6 +3,7 @@
 import Link from "next/link";
 
 import JourneyPlate from "@/components/site/journey-plate";
+import TrekRoute from "@/components/site/trek-route";
 import { ErrorNote, LoadingBlock } from "@/components/site/states";
 import { useFetchPackageById } from "@/hooks/get";
 import { formatDate, formatMoney } from "@/lib/format";
@@ -143,6 +144,8 @@ export default function PackageDetail({ id }: { id: string }) {
               {journey.description ||
                 "Details for this departure are still being written. The field office will fill them in before the route opens for booking."}
             </p>
+
+            {journey.route ? <TrekRoute route={journey.route} /> : null}
 
             {gallery.length > 0 ? (
               <div className="mt-12 grid gap-4 sm:grid-cols-2">

@@ -16,6 +16,12 @@ export type PackageMedia = {
 
 export type Difficulty = "EASY" | "MODERATE" | "CHALLENGING" | "STRENUOUS";
 
+export type TrekRoute = {
+  points: [number, number][];
+  elevation: number[];
+  stops: { name: string; x: number; y: number; type: string }[];
+};
+
 export type TravelPackage = {
   id: string;
   name: string;
@@ -27,6 +33,7 @@ export type TravelPackage = {
   difficulty?: Difficulty | null;
   bestSeason?: string | null;
   groupSize?: number | null;
+  route?: TrekRoute | null;
   createdAt: string;
   updatedAt: string;
   media?: PackageMedia[];
@@ -50,6 +57,7 @@ export type PackagePayload = {
   difficulty?: Difficulty;
   bestSeason?: string;
   groupSize?: number;
+  route?: TrekRoute;
   images: Array<{ public_id: string; url: string }>;
 };
 
