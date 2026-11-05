@@ -17,11 +17,9 @@ export type PackageMedia = {
 export type Difficulty = "EASY" | "MODERATE" | "CHALLENGING" | "STRENUOUS";
 
 export type TrekRoute = {
-  center: [number, number];
-  zoom: number;
   points: [number, number][];
   elevation: number[];
-  stops: { name: string; lat: number; lng: number; type: string }[];
+  stops: { name: string; x: number; y: number; type: string }[];
 };
 
 export type TravelPackage = {

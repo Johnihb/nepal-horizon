@@ -1,69 +1,55 @@
 import { prisma } from "./lib/prisma.ts";
 
 const routes: Record<string, {
-  center: [number, number];
-  zoom: number;
   points: [number, number][];
   elevation: number[];
-  stops: { name: string; lat: number; lng: number; type: string }[];
+  stops: { name: string; x: number; y: number; type: string }[];
 }> = {
   "Arnapurna treck": {
-    center: [28.5, 84.0],
-    zoom: 9,
-    points: [[28.2096, 83.9856], [28.2333, 84.3833], [28.55, 84.2333], [28.6667, 84.0167], [28.7931, 83.9356], [28.8167, 83.8667], [28.7833, 83.7333], [28.5, 83.65]],
-    elevation: [820, 1500, 2500, 3500, 5416, 3800, 2000, 1200],
+    points: [[32, 62], [36, 52], [42, 42], [48, 36], [52, 46], [47, 58], [40, 62]],
+    elevation: [820, 1500, 2500, 3500, 5416, 3800, 2000],
     stops: [
-      { name: "Pokhara", lat: 28.2096, lng: 83.9856, type: "start" },
-      { name: "Manang", lat: 28.6667, lng: 84.0167, type: "village" },
-      { name: "Thorong La", lat: 28.7931, lng: 83.9356, type: "pass" },
-      { name: "Muktinath", lat: 28.8167, lng: 83.8667, type: "village" },
-      { name: "Jomsom", lat: 28.7833, lng: 83.7333, type: "end" },
+      { name: "Pokhara", x: 32, y: 62, type: "start" },
+      { name: "Manang", x: 42, y: 42, type: "village" },
+      { name: "Thorong La", x: 48, y: 36, type: "pass" },
+      { name: "Muktinath", x: 52, y: 46, type: "village" },
+      { name: "Jomsom", x: 47, y: 58, type: "end" },
     ],
   },
   "Everest Base Camp Trek": {
-    center: [27.85, 86.78],
-    zoom: 10,
-    points: [[27.6875, 86.7289], [27.8069, 86.71], [27.8364, 86.7644], [27.8936, 86.8314], [27.9494, 86.8067], [27.9653, 86.8269], [27.9881, 86.8586]],
-    elevation: [2860, 3440, 3860, 4410, 4940, 5180, 5364],
+    points: [[78, 68], [76, 58], [74, 50], [72, 42], [70, 36], [68, 32]],
+    elevation: [2860, 3440, 3860, 4410, 4940, 5364],
     stops: [
-      { name: "Lukla", lat: 27.6875, lng: 86.7289, type: "start" },
-      { name: "Namche", lat: 27.8069, lng: 86.71, type: "village" },
-      { name: "Tengboche", lat: 27.8364, lng: 86.7644, type: "village" },
-      { name: "Dingboche", lat: 27.8936, lng: 86.8314, type: "village" },
-      { name: "EBC", lat: 27.9881, lng: 86.8586, type: "end" },
+      { name: "Lukla", x: 78, y: 68, type: "start" },
+      { name: "Namche", x: 76, y: 58, type: "village" },
+      { name: "Tengboche", x: 74, y: 50, type: "village" },
+      { name: "Dingboche", x: 72, y: 42, type: "village" },
+      { name: "EBC", x: 68, y: 32, type: "end" },
     ],
   },
   "Ghorepani Poon Hill Trek": {
-    center: [28.35, 83.73],
-    zoom: 11,
-    points: [[28.2917, 83.7667], [28.3167, 83.7333], [28.4, 83.7], [28.4006, 83.6867], [28.3833, 83.7667], [28.3667, 83.8]],
-    elevation: [1000, 1500, 2000, 3210, 2600, 1940],
+    points: [[34, 70], [36, 64], [38, 58], [40, 52]],
+    elevation: [1000, 1500, 2000, 3210],
     stops: [
-      { name: "Nayapul", lat: 28.2917, lng: 83.7667, type: "start" },
-      { name: "Ghorepani", lat: 28.4, lng: 83.7, type: "village" },
-      { name: "Poon Hill", lat: 28.4006, lng: 83.6867, type: "pass" },
-      { name: "Ghandruk", lat: 28.3667, lng: 83.8, type: "end" },
+      { name: "Nayapul", x: 34, y: 70, type: "start" },
+      { name: "Ghorepani", x: 38, y: 58, type: "village" },
+      { name: "Poon Hill", x: 40, y: 52, type: "pass" },
     ],
   },
   "Pokhara Adventure Escape": {
-    center: [28.21, 83.98],
-    zoom: 12,
-    points: [[28.2096, 83.9856], [28.24, 83.95], [28.19, 83.96], [28.2, 84.0]],
-    elevation: [800, 1000, 900, 1100],
+    points: [[32, 64], [34, 60], [36, 56]],
+    elevation: [800, 1000, 1200],
     stops: [
-      { name: "Pokhara", lat: 28.2096, lng: 83.9856, type: "start" },
-      { name: "Sarangkot", lat: 28.24, lng: 83.95, type: "pass" },
-      { name: "Davis Falls", lat: 28.19, lng: 83.96, type: "village" },
+      { name: "Pokhara", x: 32, y: 64, type: "start" },
+      { name: "Sarangkot", x: 36, y: 56, type: "end" },
     ],
   },
   "Lumbini Spiritual Journey": {
-    center: [27.47, 83.276],
-    zoom: 14,
-    points: [[27.4833, 83.2764], [27.4694, 83.2756], [27.47, 83.276]],
-    elevation: [150, 155, 160],
+    points: [[22, 82], [24, 80]],
+    elevation: [150, 160],
     stops: [
-      { name: "Lumbini", lat: 27.4833, lng: 83.2764, type: "start" },
-      { name: "Maya Devi", lat: 27.4694, lng: 83.2756, type: "end" },
+      { name: "Lumbini", x: 22, y: 82, type: "start" },
+      { name: "Maya Devi", x: 24, y: 80, type: "end" },
     ],
   },
 };
