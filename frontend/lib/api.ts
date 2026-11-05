@@ -226,6 +226,8 @@ export function uploadImage(
       }
     };
     xhr.onerror = () => reject(new ApiError("Upload failed. Check your connection and try again."));
+    xhr.ontimeout = () => reject(new ApiError("Upload timed out. Check your connection and try again."));
+    xhr.onabort = () => reject(new ApiError("Upload cancelled."));
     xhr.send(form);
   });
 }

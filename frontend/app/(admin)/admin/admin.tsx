@@ -525,8 +525,6 @@ function JourneyEditor({
       }
     } catch (error) {
       setNotice({ tone: "error", text: toApiError(error).message });
-    } finally {
-      setUploadProgress(0);
     }
   }
 
