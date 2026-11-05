@@ -1962,6 +1962,14 @@ html:has(.nh-route) {
     outline-offset: -2px;
   }
 
+  .nh-row--compared {
+    background: color-mix(in srgb, var(--nh-page-fg) 8%, var(--nh-page-bg));
+  }
+
+  .nh-row--compare {
+    cursor: pointer;
+  }
+
   .nh-row:hover .nh-meta,
   .nh-row:hover .nh-muted {
     color: inherit;
