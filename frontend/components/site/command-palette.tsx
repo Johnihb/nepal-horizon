@@ -13,7 +13,6 @@ const ITEMS: Item[] = [
   { label: "Field office", href: "/dashboard", hint: "analytics" },
   { label: "Journeys", href: "/packages", hint: "public ledger" },
   { label: "My bookings", href: "/bookings", hint: "your reservations" },
-  { label: "New journey", href: "/admin", hint: "opens the console" },
 ];
 
 export function CommandPalette() {
@@ -72,6 +71,7 @@ export function CommandPalette() {
   function onInputKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
     if (event.key === "ArrowDown") {
       event.preventDefault();
+      if (filtered.length === 0) return;
       setActive((i) => Math.min(i + 1, filtered.length - 1));
     } else if (event.key === "ArrowUp") {
       event.preventDefault();

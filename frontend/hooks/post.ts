@@ -142,9 +142,7 @@ export function useUpdateBookingStatus() {
       }
 
       if (!uploaded.length && failures.length) {
-        const err = toApiError(failures[0]);
-        toast.error(err.message);
-        throw err;
+        throw toApiError(failures[0]);
       }
       if (failures.length) {
         toast.error(`${failures.length} image(s) failed to upload.`);

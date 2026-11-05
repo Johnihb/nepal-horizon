@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist_Mono, Work_Sans, Inter } from "next/font/google";
+import { Geist_Mono, Inter, Fira_Sans } from "next/font/google";
 import "./globals.css";
 import Providers from "@/lib/tanstack/provider";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
-const workSans = Work_Sans({
+const firaSans = Fira_Sans({
   variable: "--font-display",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
@@ -44,7 +44,7 @@ export default function RootLayout({
         "h-full",
         "antialiased",
         inter.variable,
-        workSans.variable,
+        firaSans.variable,
         geistMono.variable,
         "font-sans",
       )}
