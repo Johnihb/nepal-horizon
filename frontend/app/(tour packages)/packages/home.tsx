@@ -122,6 +122,7 @@ function Ledger() {
             journey={journey}
             compareMode={compareMode}
             compared={selected.includes(journey.id)}
+            compareFull={selected.length >= 3}
             onToggleCompare={toggleCompare}
           />
         ))}

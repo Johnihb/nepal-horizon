@@ -1978,10 +1978,6 @@ html:has(.nh-route) {
     accent-color: var(--nh-page-fg);
   }
 
-  .nh-row--compare {
-    cursor: pointer;
-  }
-
   .nh-row:hover .nh-meta,
   .nh-row:hover .nh-muted {
     color: inherit;
