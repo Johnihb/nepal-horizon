@@ -3,6 +3,7 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 // If your Prisma file is located elsewhere, you can change the path
 import { prisma } from "./prisma.ts";
 import { Resend } from "resend";
+import { verificationEmail, resetPasswordEmail } from "./emailTemplates.ts";
 
 const githubClientId = process.env.GITHUB_CLIENT_ID;
 const githubClientSecret = process.env.GITHUB_CLIENT_SECRET;
@@ -46,8 +47,8 @@ export const auth = betterAuth({
       const { error } = await resend.emails.send({
         from: "onboarding@resend.dev",
         to: user.email,
-        subject: "Reset your password",
-        html: `Click <a href="${url}">here</a> to reset your password.`,
+        subject: "Reset your password — Nepal Horizon",
+        html: resetPasswordEmail(user.name ?? "", url),
       });
       if (error) {
         console.error("RESEND ERROR (reset):", error);
@@ -62,8 +63,8 @@ export const auth = betterAuth({
       const { data, error } = await resend.emails.send({
         from: "onboarding@resend.dev",
         to: user.email,
-        subject: "Verify your email",
-        html: `<a href="${url}">Verify your email</a>`,
+        subject: "Verify your email — Nepal Horizon",
+        html: verificationEmail(user.name ?? "", url),
       });
 
       if (error) {
