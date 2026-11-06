@@ -40,6 +40,9 @@ const authLimiter = rateLimit({
   max: 20,
   standardHeaders: true,
   legacyHeaders: false,
+  // Session checks (GET /api/auth/get-session) fire on every page navigation.
+  // Only rate-limit auth mutations (POST sign-in/sign-up/reset).
+  skip: (req) => req.method === "GET",
   message: { error: "Too many requests, please try again later." },
 });
 app.use("/api/auth", authLimiter);
