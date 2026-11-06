@@ -9,7 +9,7 @@ const githubClientId = process.env.GITHUB_CLIENT_ID;
 const githubClientSecret = process.env.GITHUB_CLIENT_SECRET;
 const googleClientId = process.env.GOOGLE_CLIENT_ID;
 const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
-const resendApiKey = process.env.RESEND_API_KEY;
+const resendApiKey = process.env.RESEND_API_KEY ?? "";
 const resend = new Resend(resendApiKey);
 
 if (!githubClientId || !githubClientSecret) {
@@ -31,7 +31,7 @@ if (!resendApiKey) {
 }
 
 export const auth = betterAuth({
-  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:5000",
+  baseURL: process.env.BETTER_AUTH_URL ?? "http://localhost:5000",
   database: prismaAdapter(prisma, {
     provider: "postgresql", // or "mysql", "postgresql", ...etc
   }),
@@ -91,5 +91,5 @@ export const auth = betterAuth({
       clientSecret: googleClientSecret,
     },
   },
-  trustedOrigins: [process.env.FRONTEND_ORIGIN || "http://localhost:3000"],
+  trustedOrigins: [process.env.FRONTEND_ORIGIN ?? "http://localhost:3000"],
 });

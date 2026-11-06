@@ -14,7 +14,7 @@ import { adminAuth } from "./middleware/adminAuth.middeware.ts";
 
 const app = express();
 const PORT: number = Number(process.env.PORT) || 5000;
-const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || "http://localhost:3000";
+const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN ?? "http://localhost:3000";
 
 // Validate required env vars at startup
 const requiredEnv = ["DATABASE_URL", "BETTER_AUTH_SECRET", "CLOUDINARY_CLOUD_NAME", "CLOUDINARY_API_KEY", "CLOUDINARY_API_SECRET"];
