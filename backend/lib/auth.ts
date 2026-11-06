@@ -91,5 +91,8 @@ export const auth = betterAuth({
       clientSecret: googleClientSecret,
     },
   },
-  trustedOrigins: [process.env.FRONTEND_ORIGIN ?? "http://localhost:3000"],
+  trustedOrigins: (process.env.FRONTEND_ORIGIN ?? "http://localhost:3000")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean),
 });

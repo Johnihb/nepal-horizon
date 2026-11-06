@@ -15,7 +15,10 @@ import { prisma } from "./lib/prisma.ts";
 
 const app = express();
 const PORT: number = Number(process.env.PORT) || 5000;
-const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN ?? "http://localhost:3000";
+const FRONTEND_ORIGINS = (process.env.FRONTEND_ORIGIN ?? "http://localhost:3000")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
 
 // Validate required env vars at startup
 const requiredEnv = ["DATABASE_URL", "BETTER_AUTH_SECRET", "CLOUDINARY_CLOUD_NAME", "CLOUDINARY_API_KEY", "CLOUDINARY_API_SECRET", "BETTER_AUTH_URL", "GITHUB_CLIENT_ID", "GITHUB_CLIENT_SECRET", "GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET"];
@@ -27,7 +30,13 @@ for (const key of requiredEnv) {
 }
 
 app.use(cors({
-  origin: FRONTEND_ORIGIN,
+  origin: (origin, callback) => {
+    if (!origin || FRONTEND_ORIGINS.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true,
 }))
 
