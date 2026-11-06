@@ -47,7 +47,7 @@ export const auth = betterAuth({
       const { error } = await resend.emails.send({
         from: "onboarding@resend.dev",
         to: user.email,
-        subject: "Reset your password — Nepal Horizon",
+        subject: "Reset your password - Nepal Horizon",
         html: resetPasswordEmail(user.name ?? "", url),
       });
       if (error) {
@@ -58,12 +58,10 @@ export const auth = betterAuth({
   emailVerification: {
     sendOnSignUp: true,
     sendVerificationEmail: async ({ user, url }) => {
-      console.log("Verification callback triggered:", user.email);
-
       const { data, error } = await resend.emails.send({
         from: "onboarding@resend.dev",
         to: user.email,
-        subject: "Verify your email — Nepal Horizon",
+        subject: "Verify your email - Nepal Horizon",
         html: verificationEmail(user.name ?? "", url),
       });
 
@@ -71,8 +69,6 @@ export const auth = betterAuth({
         console.error("RESEND ERROR (verify):", error);
         return;
       }
-
-      console.log("RESEND SUCCESS:", data?.id);
     },
   },
   user: {
@@ -95,5 +91,5 @@ export const auth = betterAuth({
       clientSecret: googleClientSecret,
     },
   },
-  trustedOrigins: ["http://localhost:3000"],
+  trustedOrigins: [process.env.FRONTEND_ORIGIN || "http://localhost:3000"],
 });
