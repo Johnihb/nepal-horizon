@@ -95,4 +95,13 @@ export const auth = betterAuth({
     .split(",")
     .map((origin) => origin.trim())
     .filter(Boolean),
+  advanced: (process.env.BETTER_AUTH_URL ?? "").startsWith("https://")
+    ? {
+        useSecureCookies: true,
+        defaultCookieAttributes: {
+          sameSite: "none",
+          secure: true,
+        },
+      }
+    : undefined,
 });

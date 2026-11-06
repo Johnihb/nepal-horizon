@@ -174,7 +174,7 @@ export default function SignupPage() {
     try {
       const { error } = await authClient.signIn.social({
         provider: "github",
-        callbackURL: "http://localhost:3000/packages",
+        callbackURL: `${window.location.origin}/packages`,
       });
 
       if (error) {
@@ -195,7 +195,7 @@ export default function SignupPage() {
     try {
       const { error } = await authClient.signIn.social({
         provider: "google",
-        callbackURL: "http://localhost:3000/packages",
+        callbackURL: `${window.location.origin}/packages`,
       });
 
       if (error) {
