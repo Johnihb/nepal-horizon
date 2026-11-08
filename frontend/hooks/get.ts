@@ -13,7 +13,7 @@ export function usePackagePagination(offset = 0) {
   return useQuery({
     queryKey: ["packagePagination", offset],
     queryFn: () => fetchPackages(offset),
-    staleTime: 30_000,
+    staleTime: 300_000,
   });
 }
 
