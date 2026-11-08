@@ -9,25 +9,19 @@ export const getPackages = async (req: Request, res: Response) => {
     const validatedData = offsetValueSchema.parse(req.query);
     const page = validatedData.offset ?? 0;
     const offset = page * 5;
-    const packages = await prisma.package.findMany({
-      include: {
-        media: true,
-      },
-      orderBy: [
-        {
-          price: "desc",
-        },
-        {
-          id: "asc",
-        },
-      ],
-      skip: offset,
-      take: 5,
-    });
+    const [packages, total] = await Promise.all([
+      prisma.package.findMany({
+        include: { media: true },
+        orderBy: [{ price: "desc" }, { id: "asc" }],
+        skip: offset,
+        take: 5,
+      }),
+      prisma.package.count(),
+    ]);
     res.status(200).json(
       apiResponse(200, {
         packages,
-        nextPage: packages.length === 5 ? page + 1 : null,
+        nextPage: offset + packages.length < total ? page + 1 : null,
       }),
     );
   } catch (error) {
