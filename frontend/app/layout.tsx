@@ -20,8 +20,70 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Nepal Horizon | Trekking Tours",
-  description: "Journey through the world's highest peaks with hand-curated trekking expeditions.",
+  metadataBase: new URL("https://nepalhorizon.vercel.app"),
+  title: {
+    default: "Nepal Horizon | Trekking Tours in Nepal",
+    template: "%s | Nepal Horizon",
+  },
+  description:
+    "Hand-curated small-group trekking journeys through Nepal's quietest high places — Everest, Annapurna, Manaslu, Mustang and beyond. Built around weather, local knowledge and time to look up.",
+  keywords: [
+    "Nepal trekking",
+    "Nepal Horizon",
+    "trekking in Nepal",
+    "Himalayan treks",
+    "Everest Base Camp trek",
+    "Annapurna circuit",
+    "Manaslu circuit",
+    "Upper Mustang trek",
+    "small group trekking Nepal",
+    "Nepal tourism",
+  ],
+  applicationName: "Nepal Horizon",
+  authors: [{ name: "Nepal Horizon" }],
+  creator: "Nepal Horizon",
+  publisher: "Nepal Horizon",
+  category: "Travel",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_GB",
+    url: "https://nepalhorizon.vercel.app",
+    siteName: "Nepal Horizon",
+    title: "Nepal Horizon | Trekking Tours in Nepal",
+    description:
+      "Hand-curated small-group trekking journeys through Nepal's quietest high places.",
+    images: [
+      {
+        url: "https://res.cloudinary.com/dshcoqzuu/image/upload/v1793007884/hg9k0aupufvgvgqikngh.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Nepal Horizon — trekking journeys through Nepal",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Nepal Horizon | Trekking Tours in Nepal",
+    description:
+      "Hand-curated small-group trekking journeys through Nepal's quietest high places.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export const viewport: Viewport = {
@@ -54,6 +116,22 @@ export default function RootLayout({
           cheap, the images are not — open the connection early.
         */}
         <link rel="preconnect" href="https://res.cloudinary.com" />
+
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "TravelAgency",
+              name: "Nepal Horizon",
+              url: "https://nepalhorizon.vercel.app",
+              description:
+                "Hand-curated small-group trekking journeys through Nepal's quietest high places.",
+              areaServed: "Nepal",
+              email: "keshwor12@gmail.com",
+            }),
+          }}
+        />
 
         <ThemeProvider>
           <Providers>
