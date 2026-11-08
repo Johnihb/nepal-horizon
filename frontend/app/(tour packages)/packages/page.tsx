@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import Home from "./home";
 import SiteShell from "@/components/site/site-shell";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Journeys",
   description:
