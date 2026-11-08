@@ -78,7 +78,7 @@ export function toApiError(error: unknown): ApiError {
 /** GET /user/packages?offset=<page index> — the backend pages 5 at a time. */
 export async function fetchPackages(page = 0): Promise<PackagesPage> {
   const { data } = await axios.get<{ body?: PackagesPage }>("/user/packages", {
-    params: { offset: page },
+    params: { offset: page, _t: Date.now() },
   });
   return data.body ?? { packages: [], nextPage: null };
 }
