@@ -104,9 +104,6 @@ export default function NepalHorizon() {
           textAlign: "center",
           padding: "8px 12px",
           fontSize: "13px",
-          position: "sticky",
-          top: 0,
-          zIndex: 50,
         }}
       >
         <span>This is a side project. </span>
