@@ -95,30 +95,6 @@ export default function NepalHorizon() {
 
   return (
     <main ref={scope} className="nh-route">
-      <div
-        className="nh-side-project-banner"
-        role="note"
-        style={{
-          background: "#111",
-          color: "#fff",
-          textAlign: "center",
-          padding: "8px 12px",
-          fontSize: "13px",
-          position: "sticky",
-          top: 0,
-          zIndex: 50,
-        }}
-      >
-        <span>This is a side project. </span>
-        <a
-          href="https://github.com/Johnihb/nepal-horizon"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ color: "#9ae6ea", textDecoration: "underline" }}
-        >
-          View the source on GitHub →
-        </a>
-      </div>
       <a className="nh-skip-link" href="#journeys">Skip to journeys</a>
 
       {/* Outside .nh-hero-stage on purpose: that stage is `isolation: isolate`,
@@ -315,7 +291,6 @@ export default function NepalHorizon() {
         <a className="nh-mark" href="#top" aria-label="Back to top"><span aria-hidden="true">NH</span><span>NEPAL HORIZON</span></a>
         <p>Mountain journeys, Nepal</p>
         <a href="mailto:keshwor12@gmail.com">keshwor12@gmail.com</a>
-        <a href="https://github.com/Johnihb/nepal-horizon" target="_blank" rel="noopener noreferrer">GitHub</a>
       </footer>
     </main>
   )
