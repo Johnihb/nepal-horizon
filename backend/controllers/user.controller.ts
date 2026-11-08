@@ -18,7 +18,7 @@ export const getPackages = async (req: Request, res: Response) => {
       }),
       prisma.package.count(),
     ]);
-    res.set("Cache-Control", "no-store, no-cache, must-revalidate");
+    res.set("Cache-Control", "public, max-age=300, stale-while-revalidate=600");
     res.status(200).json(
       apiResponse(200, {
         packages,
