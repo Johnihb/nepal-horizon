@@ -11,3 +11,4 @@ daas.ts
 *.log
 graphify-out
 shots
+opencode.json
